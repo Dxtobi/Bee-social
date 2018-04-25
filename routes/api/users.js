@@ -4,12 +4,13 @@ const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const keys = require('../../config/keys');
+const passport = require('passport');
 
 const User = require('../../models/User');
 
 router.get( '/test', ( req, res ) =>  res.json({ message: 'Users works!' }) );
 
-router.post('/register', ( req, res ) => {
+router.post( '/register', ( req, res ) => {
     User.findOne({ email : req.body.email })
         .then( user => {
         if( user ){
@@ -41,7 +42,7 @@ router.post('/register', ( req, res ) => {
     });
 });
 
-router.post('/login', (req, res) => {
+router.post( '/login', ( req, res ) => {
     const email = req.body.email;
     const password = req.body.password;
     
@@ -74,6 +75,15 @@ router.post('/login', (req, res) => {
                 return res.status( '400' ).json({ password: 'Password incorrect!' });
             }
         });
+    });
+});
+
+router.get( '/current', passport.authenticate( 'jwt', { session: false } ), ( req, res ) => {
+    //res.json( req.user );
+    res.json({
+        id: req.user.id,
+        name: req.user.name,
+        email: req.user.email
     });
 });
 

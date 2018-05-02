@@ -7,7 +7,7 @@ class Landing extends Component {
               <div className="landing">
                 <div className="dark-overlay landing-inner text-light">
                   <div className="container">
-                    <div claclassNamess="row">
+                    <div className="row">
                       <div className="col-md-12 text-center">
                         <h1 className="display-3 mb-4">Developer Connector
                         </h1>

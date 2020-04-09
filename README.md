@@ -1,6 +1,6 @@
 ## github-social-network MERN Stack Front To Back: Full Stack React, Redux & Node.
 
-A social network with Node.js, Express, React, Redux & MongoDB. This Code is based on Brad Traversy course.
+A social network with Node.js, Express, React, Redux & MongoDB. 
 
 Full stack social network app with React, Redux, Node, Express & MongoDB
 Extensive backend API with Express
@@ -24,6 +24,9 @@ $ npm install
 ``` sh
 $ npm run start 
 ```
+### for dev development run 
+``` sh
+$ npm run dev 
+```
 
-- Go on http://localhost:8080/
 

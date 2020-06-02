@@ -3,21 +3,16 @@ import { Link } from 'react-router-dom';
 
 const ProfileActions = () => {
   return (
-    <div>
-      <div className="btn-group mb-4" role="group">
-        <Link to="/edit-profile" className="btn btn-light">
-          <i className="fas fa-user-circle text-info mr-1"></i> Edit Profile
+    
+      <div className="btn-group-role" style={{display: 'flex'}} >
+        <Link to="/edit-profile" className="btn-add-experience">
+            Edit Profile
         </Link>
-        <Link to="/add-experience" className="btn btn-light">
-          <i className="fab fa-black-tie text-info mr-1"></i>
-          Add Experience
-        </Link>
-        <Link to="/add-education" className="btn btn-light">
-          <i className="fas fa-graduation-cap text-info mr-1"></i>
-          Add Education
+        <Link to="/followers" className="btn-add-experience">
+            People you know
         </Link>
       </div>
-    </div>
+   
   )
 }
 

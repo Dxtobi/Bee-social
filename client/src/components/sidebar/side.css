@@ -1,0 +1,29 @@
+.side-bar.open{
+    transform: translateX(0);
+    -webkit-transform: translateX(0);
+    -moz-transform: translateX(0);
+    -ms-transform: translateX(0);
+    -o-transform: translateX(0);
+}
+
+.sidebardroper{
+    background: rgba(0, 0, 0, 0.267);
+    width: 100%;
+    position: fixed;
+    height: 100%;
+    top: 0;
+    z-index: 101;
+    transition: transform 6s ease-out;
+    transform:translateX(-100%);
+}
+.sidebardroper.open{
+    transform: translateX(0);
+    -webkit-transform: translateX(0);
+    -moz-transform: translateX(0);
+    -ms-transform: translateX(0);
+    -o-transform: translateX(0);
+}
+
+.side{
+    width: 100%;
+}

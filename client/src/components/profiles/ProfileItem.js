@@ -1,52 +1,77 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import isEmpty from '../../validation/is-empty';
+//import isEmpty from '../../validation/is-empty';
+
+
+
 
 class ProfileItem extends Component{
+  state = {
+    follow : 'Follow'
+  }
+  findProfileFollow(follow, userId){
+    //const { auth } = this.props;
+    if(follow.length > 0){
+      if(follow.filter(e => e.user === userId).length > 0) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+
 
   render() {
+     
+    const { profile, follow , profileUser, unfollow} = this.props;
+    //console.log('PROFILE: '+this.props.profile);
+      let profileImg;
+      let isfollowing
+    if (this.findProfileFollow(profile.followers, profileUser)) {
+        isfollowing = <div className=" btn-following profile_list_item settop5" onClick={()=>unfollow(profile._id)}>Unfollow</div>
+    } else {
+     // console.log(profile.followers);
+      isfollowing = <div  className="btn-follow profile_list_item settop5" onClick={()=>follow(profile._id)}>Follow</div>
+    }
 
-    const { profile } = this.props;
-    console.log('PROFILE: '+this.props.profile);
 
+
+
+
+      if(profile.profileImageData){
+        profileImg = <img src={profile.profileImageData} alt='.'  />
+      }else{
+        
+        profileImg = <Link to={`/profile/${profile.handle}`}><img src='/assets/images/avatar.png' alt='.'  /></Link>
+      }
     return (
-      <div className="card card-body bg-light mb-3">
-        <div className="row">
-            <div className="col-2">
-              <img src={profile.user.avatar} alt="" className="rounded-circle"/>
-            </div>
-            <div className="col-lg-6 col-md-4 col-8">
-              <h3>{profile.user.name}</h3>
-              <p>
-                {profile.status} {isEmpty(profile.company) ? null :(<span>at {profile.company}</span>)}
-              </p>
-              <p>
-                {isEmpty(profile.location) ? null : (<span>{profile.location}</span>)}
-              </p>
-              <Link to={`/profile/${profile.handle}`} className="btn btn-info">
-                View Profile
-              </Link>
-            </div>
-            <div className="col-md-4 d-none d-md-block">
-              <h4>Skill Set</h4>
-              <ul className="list-group">
-                {profile.skills.slice(0,4).map((skill, index)=> (
-                  <li key={index} className="list-group-item">
-                    <i className="fa fa-check pr-1"/>
-                    { skill }
-                  </li>
-                ))}
-              </ul>
-            </div>
-        </div>
+      <div className="profile_list">
+         <Link  className = 'a-tag' to={`/profile/${profile._id}`}>
+          <div className='imgandname'>
+              <div className=" profile_list_item ">
+               
+                  <div className="profile_img">{profileImg}</div>
+               
+              </div>
+              <div className=" profile_list_item ">
+                {profile.name}<br />
+                <small>{profile.handle}</small>
+              </div>
+           </div>
+        </Link>
+            
+            <div className='v-spacer'/>
+            {isfollowing}
+        
       </div>
     )
   }
 }
 
 ProfileItem.propTypes = {
-  profile: PropTypes.object.isRequired
+  profile: PropTypes.object.isRequired,
+ // findProfileFollow: PropTypes.func.isRequired,
 }
 
 export default ProfileItem;

@@ -1,0 +1,31 @@
+.setting-wraper{
+ width: 90%;
+ margin: auto;
+}
+.setting-footer{
+    display: flex;
+    width: 120%;
+}
+.setting-page{
+    height : 100vh;
+}
+.setting-top{
+    font-size: 30px;
+    font-weight: 500;
+}
+.setting-box{
+    width: 95%;
+    background: #00000085;
+    color: white;
+    margin: auto;
+    padding: .6rem;
+    border-radius: 20px;
+    box-shadow: 0px 4px 20px 0px #00000085;
+    margin-top: 15px;
+}
+.setting-box-content{
+    display: flex;
+    justify-content: right;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}

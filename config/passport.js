@@ -15,8 +15,16 @@ module.exports = passport => {
       new JwtStrategy( opts, (jwt_payload, done) => {
             //console.log(jwt_payload);
           User.findById(jwt_payload.id)
-            .then( user =>{
-            if(user){
+            .then( thisuser =>{
+            if(thisuser){
+              let user = {
+                firstname : thisuser.firstname,
+                secondname : thisuser.secondname,
+                id : thisuser._id,
+                handle : thisuser.handle,
+                userImageData : thisuser.userImageData,
+                isAdmin : thisuser.userTypeAdmin,
+              }
                 return done( null, user );
             }
               return done( null, false );

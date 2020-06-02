@@ -1,4 +1,4 @@
 module.exports = {
-    mongoURI: 'mongodb://localhost/nodeapi',
+    mongoURI: 'mongodb://localhost/9ype',
     secretKey: 'secret'
 };

@@ -8,6 +8,9 @@ import InputGroup from '../common/InputGroup';
 import SelectListGroup from '../common/SelectListGroup';
 import TextAreaFieldGroup from '../common/TextAreaFieldGroup';
 
+
+let formobj = new FormData();
+let defimg = '/assets/images/pixocam.png';
 class CreateProfile extends Component {
 
   constructor( props ) {
@@ -18,6 +21,7 @@ class CreateProfile extends Component {
           company: '',
           website: '',
           location: '',
+          postImage: defimg,
           status: '',
           skills: '',
           githubusername: '',
@@ -32,6 +36,7 @@ class CreateProfile extends Component {
 
       this.onChange = this.onChange.bind( this );
       this.onSubmit = this.onSubmit.bind( this );
+      this.onChangeImg = this.onChangeImg.bind(this);
   }
 
   componentWillReceiveProps( nextProps ){
@@ -39,7 +44,16 @@ class CreateProfile extends Component {
      this.setState({errors: nextProps.errors});
     }
   }
-
+  onChangeImg(e){
+    formobj.append('profileImage' ,  'pip-'+ Date.now());
+    formobj.append('profileImageData', e.target.files[0])
+   
+    this.setState({
+      postImage : URL.createObjectURL(e.target.files[0])
+    })
+    //this.setState({[e.target.name]: e.target.value});
+    console.log(formobj);
+  }
   onChange( e ){
     this.setState( { [e.target.name]: e.target.value } );
   }
@@ -48,7 +62,7 @@ class CreateProfile extends Component {
 
     e.preventDefault();
 
-    const profileData = {
+   /* const profileData = {
       handle: this.state.handle,
       company: this.state.company,
       website: this.state.website,
@@ -62,9 +76,25 @@ class CreateProfile extends Component {
       linkedin: this.state.linkedin,
       youtube: this.state.youtube,
       instagram: this.state.instagram
-    }
-
-    this.props.createProfile( profileData, this.props.history );
+    }*/
+    const {user} = this.props.auth;
+      formobj.append('id' , user.id)
+      formobj.append( 'handle', this.state.handle);
+      formobj.append( 'company', this.state.company);
+      formobj.append( 'website', this.state.website);
+      formobj.append( 'location', this.state.location);
+      formobj.append( 'status', this.state.status);
+      formobj.append( 'skills', this.state.skills);
+      formobj.append( 'bio', this.state.bio);
+      formobj.append( 'twitter', this.state.twitter);
+      formobj.append( 'facebook', this.state.facebook);
+      formobj.append( 'linkedin', this.state.linkedin);
+      formobj.append( 'instagram', this.state.instagram);
+      formobj.append( 'youtube', this.state.youtube);
+    
+      this.props.createProfile( formobj, this.props.history );
+    
+    
   }
 
   render() {
@@ -123,30 +153,40 @@ class CreateProfile extends Component {
 
     // Select options for status
     const options = [
-      { label: '* Select Profesional Status', value: 0 },
-      { label: 'Developer', value: 'Developer' },
-      { label: 'Junior Developer', value: 'Junior Developer' },
-      { label: 'Senior Developer', value: 'Senior Developer' },
+      { label: 'Your Profesion', value: 0 },
+      { label: 'Working class', value: 'Working class' },
+      { label: 'Enterprenuer', value: 'Enterprenuer' },
       { label: 'Manager', value: 'Manager' },
       { label: 'Student or Learning', value: 'Student or Learning' },
       { label: 'Instructor or Teacher', value: 'Instructor or Teacher' },
-      { label: 'Intern', value: 'Intern' },
       { label: 'Other', value: 'Other' }
     ];
 
       return (
         <div className="create-profile">
-          <div className="container">
-            <div className="row">
-              <div className="col-md-8 m-auto">
-                <h1 className="display-4 text-center">Create your profile </h1>
-                <p className="lead text-center">
-                  Let´s get some information to make your profile stand out
-                </p>
-                  <small className="d-block pb-3">* = required fields</small>
-                <form onSubmit={ this.onSubmit }>
+          <div className="wrapper">
+            <div className="">
+              <div className="">
+                <h2 className="center-text">Create your profile </h2>
+                <form onSubmit={ this.onSubmit }  encType='multipart/form-data'>
+
+                <div className='profile-image-upload'>
+                  <div className=''>
+                    <label className="">
+                    
+                    <input type="file" className="file-input"  name='profileImageData'
+                      onChange={(e)=>this.onChangeImg(e, 'multer')}/>
+                      <div className='profile-preview-img'>
+                        <img src={this.state.postImage} alt='.'/>
+                      </div>
+                    </label>
+                  </div>
+                  
+                </div>
+               
+
                   <TextFieldGroup
-                    placeholder=" * Profile Handle"
+                    placeholder="  Profile Handle"
                     name="handle"
                     value={ this.state.handle }
                     onChange={ this.onChange }
@@ -187,20 +227,12 @@ class CreateProfile extends Component {
                     info="City or city & state suggested (eg. Boston, MA)"
                   />
                   <TextFieldGroup
-                    placeholder="* Skills"
+                    placeholder="Skills"
                     name="skills"
                     value={ this.state.skills }
                     onChange={ this.onChange }
                     error={ errors.skills }
                     info="Please use comma separated values (eg. HTML,CSS,JavaScript,PHP)"
-                  />
-                  <TextFieldGroup
-                    placeholder="github Username"
-                    name="githubusername"
-                    value={ this.state.githubusername }
-                    onChange={ this.onChange }
-                    error={ errors.githubusername }
-                    info="If you want your latest repos and a Github link, include your username"
                   />
                   <TextAreaFieldGroup
                     placeholder="Short Bio"
@@ -210,19 +242,19 @@ class CreateProfile extends Component {
                     error={ errors.bio }
                     info="Tell us a little about yourself"
                   />
-                  <div className="mb-3">
+                  <div className="">
                     <button
                       type="button"
                       onClick={() => {
                       this.setState( prevState => ({
                         displaySocialInputs : !prevState.displaySocialInputs
                       }))
-                    }} className="btn btn-light"> Add Social Network Links</button>
+                    }} className="btn-normal"> Social Network Links (Optional)</button>
 
-                    <span className="text-muted"> Optional</span>
+                   
                   </div>
                   { socialInputs }
-                  <input type="submit" value="Submit" className="btn btn-info btn-block mt-4"/>
+                  <input type="submit" value="Submit" className="btn-submit"/>
                 </form>
               </div>
             </div>
@@ -235,11 +267,13 @@ class CreateProfile extends Component {
 
 CreateProfile.propTypes = {
   profile: PropTypes.object.isRequired,
-  errors: PropTypes.object.isRequired
+  errors: PropTypes.object.isRequired,
+  auth: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
   profile: state.profile,
+  auth: state.auth,
   errors: state.errors
 });
 

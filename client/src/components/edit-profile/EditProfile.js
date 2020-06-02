@@ -1,42 +1,50 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link, withRouter } from 'react-router-dom';
+import {  withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+//import countries from './countries'
 import { createProfile, getCurrentProfile } from '../../actions/profileActions';
 import TextFieldGroup from '../common/TextFieldGroup';
-import InputGroup from '../common/InputGroup';
-import SelectListGroup from '../common/SelectListGroup';
 import TextAreaFieldGroup from '../common/TextAreaFieldGroup';
-import isEmpty from '../../validation/is-empty';
+//import isEmpty from '../../validation/is-empty';
+import { Avatar } from '@material-ui/core';
+
+
+
+let formobj = new FormData();
+let defimg = '/assets/images/pixocam.png';
+
+
+
+
 
 class CreateProfile extends Component {
 
   constructor( props ) {
       super( props );
       this.state = {
-          displaySocialInputs: false,
-          handle: '',
-          company: '',
-          website: '',
-          location: '',
-          status: '',
-          skills: '',
-          githubusername: '',
-          bio: '',
-          twitter: '',
-          facebook: '',
-          linkedin: '',
-          youtube: '',
-          instagram: '',
+        handle:'',
+        website: '',
+        country: '',
+        bio: '',
+        state: '',
+        email: '',
+        mobile:234,
+        userImageData: '',
+         
           errors: { }
       };
 
       this.onChange = this.onChange.bind( this );
       this.onSubmit = this.onSubmit.bind( this );
+      this.onChangeImg = this.onChangeImg.bind(this);
+       
   }
 
   componentDidMount(){
     this.props.getCurrentProfile();
+    this.clearFORMDATA()
+    
   }
 
   componentWillReceiveProps( nextProps ){
@@ -48,142 +56,104 @@ class CreateProfile extends Component {
       const profile = nextProps.profile.profile;
 
       // Bring skills array back to Comma Separated Value
-      const skillsCSV = profile.skills.join(',');
-      // If profile field doesn't exist, make empty string
-      profile.company = !isEmpty(profile.company) ? profile.company : '';
-      profile.website = !isEmpty(profile.website) ? profile.website : '';
-      profile.location = !isEmpty(profile.location) ? profile.location : '';
-      profile.githubusername = !isEmpty(profile.githubusername) ? profile.githubusername : '';
-      profile.bio = !isEmpty(profile.bio) ? profile.bio : '';
-      profile.social = !isEmpty(profile.social) ? profile.social : {};
-      profile.twitter = !isEmpty(profile.social.twitter) ? profile.social.twitter : '';
-      profile.facebook = !isEmpty(profile.social.facebook) ? profile.social.facebook : '';
-      profile.linkedin = !isEmpty(profile.social.linkedin) ? profile.social.linkedin : '';
-      profile.youtube = !isEmpty(profile.social.youtube) ? profile.social.youtube : '';
-      profile.instagram = !isEmpty(profile.social.instagram) ? profile.social.instagram : '';
-
+      
+      
+     
+     
       // Set component fields state
       this.setState({
-        handle: profile.handle,
-        company: profile.company,
-        website: profile.website,
-        location: profile.location,
-        status: profile.status,
-        skills: skillsCSV,
-        githubusername: profile.githubusername,
-        bio: profile.bio,
-        twitter: profile.twitter,
-        facebook: profile.facebook,
-        linkedin: profile.linkedin,
-        youtube: profile.youtube,
-        instagram: profile.instagram
+        handle: profile.handle === "undefined" ? '' : profile.handle,
+        website: profile.website === "undefined" ? '' : profile.website,
+        country: profile.country === "undefined" ? '' : profile.country,
+        bio: profile.bio === "undefined" ? '' : profile.bio,
+        state: profile.state === "undefined" ? '' : profile.state,
+        mobile: profile.phone === "undefined" ? '' : profile.phone,
+        email: profile.email === "undefined" ? '' : profile.email,
+        userImageData: profile.userImageData === "undefined" ? '' : profile.userImageData
       });
+      console.log(profile)
     }
   }
-
+  setdefimg(e){
+    if (e === 'multer') {
+      this.setState({
+        userImageData : defimg
+      })
+    }
+  }
   onChange( e ){
     this.setState( { [e.target.name]: e.target.value } );
   }
-
+  onChangeImg(e){
+    formobj.append('userImage' ,  'pip-'+ Date.now());
+    formobj.append('userImageData' , e.target.files[0]);
+   
+    this.setState({
+      userImageData : URL.createObjectURL(e.target.files[0])
+    })
+    //this.setState({[e.target.name]: e.target.value});
+    console.log(formobj);
+  }
   onSubmit( e ){
 
     e.preventDefault();
-
-    const profileData = {
-      handle: this.state.handle,
-      company: this.state.company,
-      website: this.state.website,
-      location: this.state.location,
-      status: this.state.status,
-      skills: this.state.skills,
-      githubusername: this.state.githubusername,
-      bio: this.state.bio,
-      twitter: this.state.twitter,
-      facebook: this.state.facebook,
-      linkedin: this.state.linkedin,
-      youtube: this.state.youtube,
-      instagram: this.state.instagram
-    }
-
-    this.props.createProfile( profileData, this.props.history );
+      formobj.append('handle' , this.state.handle);
+      formobj.append('website' , this.state.website);
+      formobj.append('country', this.state.country);
+      formobj.append('bio', this.state.bio);
+      formobj.append('state', this.state.state);
+     // formobj.append('state', this.state.state);
+      formobj.append('mobile', this.state.mobile);
+      
+   
+    console.log('====================================');
+    console.log(formobj);
+    console.log('====================================');
+    this.props.createProfile( formobj, this.props.history );
+  }
+clearFORMDATA= ()=>{
+    formobj.delete('handle')
+    formobj.delete('website')
+    formobj.delete('country')
+    formobj.delete('state')
+    formobj.delete('bio');
+    formobj.delete('mobile')
+    formobj.delete('userImage')
+    formobj.delete('userImageData')
+    console.log(formobj)
   }
 
   render() {
-
-    const { errors, displaySocialInputs } = this.state;
-
-    let socialInputs;
-
-    if( displaySocialInputs ){
-      socialInputs = (
-        <div>
-          <InputGroup
-            placeholder="Twitter Profile URL"
-            name="twitter"
-            icon="fab fa-twitter"
-            value={ this.state.twitter }
-            onChange={ this.onChange }
-            error={ errors.twitter }
-          />
-          <InputGroup
-            placeholder="Facebook Profile URL"
-            name="facebook"
-            icon="fab fa-facebook"
-            value={ this.state.facebook }
-            onChange={ this.onChange }
-            error={ errors.facebook }
-          />
-          <InputGroup
-            placeholder="Linkedin Profile URL"
-            name="linkedin"
-            icon="fab fa-linkedin"
-            value={ this.state.linkedin }
-            onChange={ this.onChange }
-            error={ errors.linkedin }
-          />
-          <InputGroup
-            placeholder="YouTube Channel URL"
-            name="youtube"
-            icon="fab fa-youtube"
-            value={ this.state.youtube }
-            onChange={ this.onChange }
-            error={ errors.youtube }
-          />
-
-          <InputGroup
-            placeholder="Instagram Page URL"
-            name="instagram"
-            icon="fab fa-instagram"
-            value={ this.state.instagram }
-            onChange={ this.onChange }
-            error={ errors.instagram }
-          />
-        </div>
-      );
-    }
-
+    
+    const { errors,  } = this.state;
+   
+ 
     // Select options for status
-    const options = [
-      { label: '* Select Profesional Status', value: 0 },
-      { label: 'Developer', value: 'Developer' },
-      { label: 'Junior Developer', value: 'Junior Developer' },
-      { label: 'Senior Developer', value: 'Senior Developer' },
-      { label: 'Manager', value: 'Manager' },
-      { label: 'Student or Learning', value: 'Student or Learning' },
-      { label: 'Instructor or Teacher', value: 'Instructor or Teacher' },
-      { label: 'Intern', value: 'Intern' },
-      { label: 'Other', value: 'Other' }
-    ];
 
       return (
         <div className="create-profile">
           <div className="container">
-            <div className="row">
-              <div className="col-md-8 m-auto">
-                <Link to="/dashboard" className="btn btn-light">Go Back</Link>
-                <h1 className="display-4 text-center">Edit Profile </h1>
-                  <small className="d-block pb-3">* = required fields</small>
-                <form onSubmit={ this.onSubmit }>
+            <div className="">
+              <div className="">
+                <button onClick={e=>this.props.history.goBack()} className="btn-normal">Go Back</button>
+            
+                <form onSubmit={ this.onSubmit } encType='multipart/form-data'>
+
+                <div className='profile-image-upload'>
+                  <div className=''>
+                    <label className="">
+                    
+                    <input type="file" className="file-input"  name='userImageData'
+                      onChange={(e)=>this.onChangeImg(e, 'multer')}/>
+                      <div className=''>
+                      <Avatar style={{width: 80,  height: 80}} variant =  'circle' src={this.state.userImageData} alt={this.props.profile.name}   />
+                        
+                      </div>
+                    </label>
+                  </div>
+                  
+                </div>
+                <div style={{marginBottom: 1+'rem'}}/>
                   <TextFieldGroup
                     placeholder=" * Profile Handle"
                     name="handle"
@@ -192,23 +162,7 @@ class CreateProfile extends Component {
                     error={ errors.handle }
                     info="A unique handle for your profile URL. Your full name, company name, nickname"
                   />
-                  <SelectListGroup
-                    placeholder=" Status"
-                    name="status"
-                    value={ this.state.status }
-                    onChange={ this.onChange }
-                    options={ options }
-                    error={ errors.status }
-                    info="Give us an idea of here you are at in your career"
-                  />
-                  <TextFieldGroup
-                    placeholder="Company"
-                    name="company"
-                    value={ this.state.company }
-                    onChange={ this.onChange }
-                    error={ errors.company }
-                    info="Could be your own company or one you work for"
-                  />
+                  <div style={{marginBottom: 1+'rem'}}/>
                   <TextFieldGroup
                     placeholder="Website"
                     name="website"
@@ -218,29 +172,43 @@ class CreateProfile extends Component {
                     info="Could be your own website or a company one"
                   />
                   <TextFieldGroup
-                    placeholder="Location"
-                    name="location"
-                    value={ this.state.location }
+                    placeholder="Email"
+                    name="email"
+                    value={ this.state.email }
                     onChange={ this.onChange }
-                    error={ errors.location }
-                    info="City or city & state suggested (eg. Boston, MA)"
+                    error={ errors.email }
+                    disabled={true}
+                    info="Could be your own website or a company one"
                   />
+                  <div style={{marginBottom: 1+'rem'}}/>
                   <TextFieldGroup
-                    placeholder="* Skills"
-                    name="skills"
-                    value={ this.state.skills }
+                    placeholder="Country"
+                    name="country"
+                    value={ this.state.country }
                     onChange={ this.onChange }
-                    error={ errors.skills }
-                    info="Please use comma separated values (eg. HTML,CSS,JavaScript,PHP)"
+                    error={ errors.country }
+                    info="Could be your own website or a company one"
                   />
+                  <div style={{marginBottom: 1+'rem'}}/>
                   <TextFieldGroup
-                    placeholder="github Username"
-                    name="githubusername"
-                    value={ this.state.githubusername }
+                    placeholder="State"
+                    name="state"
+                    value={ this.state.state }
                     onChange={ this.onChange }
-                    error={ errors.githubusername }
-                    info="If you want your latest repos and a Github link, include your username"
+                    error={ errors.state }
+                    info="Could be your own website or a company one"
                   />
+                  <div style={{marginBottom: 1+'rem'}}/>
+                  <TextFieldGroup
+                    placeholder="Mobile"
+                    name="mobile"
+                    type='number'
+                    value={ this.state.mobile }
+                    onChange={ this.onChange }
+                    error={ errors.website }
+                    info="mobile"
+                  />
+                  <div style={{marginBottom: 1+'rem'}}/>
                   <TextAreaFieldGroup
                     placeholder="Short Bio"
                     name="bio"
@@ -249,19 +217,9 @@ class CreateProfile extends Component {
                     error={ errors.bio }
                     info="Tell us a little about yourself"
                   />
-                  <div className="mb-3">
-                    <button
-                      type="button"
-                      onClick={() => {
-                      this.setState( prevState => ({
-                        displaySocialInputs : !prevState.displaySocialInputs
-                      }))
-                    }} className="btn btn-light"> Add Social Network Links</button>
-
-                    <span className="text-muted"> Optional</span>
-                  </div>
-                  { socialInputs }
-                  <input type="submit" value="Submit" className="btn btn-info btn-block mt-4"/>
+                 
+                  
+                  <input type="submit" value="Update" className="btn-submit"/>
                 </form>
               </div>
             </div>

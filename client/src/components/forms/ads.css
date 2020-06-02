@@ -1,0 +1,64 @@
+.section-ads{
+ width: 100%;
+}
+.ads-form{
+ width: 80%;
+ margin: auto;
+ align-items: center;
+ 
+}
+.chip{
+    
+    /* width: -webkit-fit-content; */
+    width: -moz-fit-content;
+    /* width: fit-content; */
+    padding: 4px;
+    /* margin: auto; */
+    /* -webkit-box-shadow: 0px 1px 20px 0px #18db1cc7; */
+    /* box-shadow: 0px 1px 20px 0px #2b7fe03a; */
+    /* border: 1px solid #16a204; */
+    border-radius: 20rem;
+    /* background: -webkit-linear-gradient(35deg, #0f7901, #1af122); */
+    background: -o-linear-gradient(35deg, #0f7901, #1af122);
+    /* background: -webkit-linear-gradient(35deg, #3F51B5, #2196F3); */
+    background: -o-linear-gradient(35deg, #3F51B5, #2196F3);
+    background: linear-gradient(55deg, #3F51B5, #2196F3);
+    color: #ffffff;
+    text-align: center;
+    -ms-flex-pack: center;
+    /* justify-content: center; */
+    margin-bottom: 4px;
+
+}
+.chip.clicked{
+    background:  #1a9bf1;
+    box-shadow: 0px 0px 0px 0px #18db1b00;
+
+}
+.ads-cips-group{
+    width: 80%;
+    margin: auto;
+}
+.prevw-header{
+    width: 70%;
+    width: 100%;
+    display: flex;
+}
+.prevw-container{
+    width: 100%;
+    position: fixed;
+    z-index: 77;
+    background: white;
+    display: flex;
+}
+.prevw-tags{
+    display: block;
+}
+.prevw-header-date{
+    color:gray;
+    margin-left: 6rem;
+}
+.prevw-header-name{
+ color:gray
+
+}

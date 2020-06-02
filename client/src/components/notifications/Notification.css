@@ -1,0 +1,56 @@
+.notification-item {
+  width: 100%;
+  text-align: center;
+  margin: auto;
+  margin-top: 16px;
+  border-radius: 15px;
+}
+.notfy-holder{
+  display: flex;
+  padding: 4px;
+}
+.notificaion-cont{
+  font-weight: bold;
+}
+.notification-item a{
+  color:rgb(90, 90, 90)
+}
+.tini-icon-nfy{
+    color: green;
+    margin: 0px;
+    position: absolute;
+}
+.nf-icons{
+  display: flex;
+}
+  .notification-item:hover {
+   
+    transform: scale(1.01);
+    box-shadow: 1px 1px 0.4rem 0.2rem #00000059;
+  }
+  .ntfmsg{
+    font-size: 1rem;
+  }
+
+  .text-primary{
+    font-size: 0.8rem;
+  }
+
+  .text-secondary{
+    font-size: 0.8rem;
+  }
+  .button-notification {
+   
+    transition: all 0.3s;
+  }
+  
+  .button-notification:hover {
+    transform: scale(0.98);
+  }
+  
+  .button-notification:active {
+    transform: scale(0.95);
+  }
+  .container{
+width: 90%;
+  }

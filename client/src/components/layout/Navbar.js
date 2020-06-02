@@ -1,80 +1,49 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+//import {MdAccountCircle} from "react-icons/md";
+import { IoMdLogIn , IoIosSend} from "react-icons/io"
+//import {FaSignInAlt} from 'react-icons/fa'
 import { connect } from 'react-redux';
 import { logoutUser } from '../../actions/authActions';
 import { clearCurrentProfile } from '../../actions/profileActions';
+//import {GiWhiteCat} from 'react-icons/gi';
+import AuthHeader from './AuthHeader';
+import { Avatar } from '@material-ui/core';
+//import { ThemeProvider } from 'styled-components';
 
 class Navbar extends Component {
 
-    onLogoutClick( e ){
-        e.preventDefault();
+    onLogoutClick(  ){
         this.props.clearCurrentProfile();
         this.props.logoutUser();
     }
+   
+      
+    
+     
 
     render() {
-
-      const { isAuthenticated, user } = this.props.auth;
-
-      const authLinks = (
-        <ul className="navbar-nav ml-auto">
-          <li className="nav-item">
-            <Link className="nav-link" to="/feed">Post Feed</Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link" to="/dashboard">Dashboard</Link>
-          </li>
-          <li className="nav-item">
-            <a
-              href=""
-              onClick={ this.onLogoutClick.bind( this ) }
-              className="nav-link" >
-            <img
-              className="rounded-circle"
-              src={ user.avatar }
-              alt={ user.name }
-              style={ { width: '25px', marginRight: '5px'} }
-              title="You must have a Gravatar connected to your email to display an image"
-              />
-              Logout
-              </a>
-          </li>
-        </ul>
-      );
-
-      const guestLinks = (
-        <ul className="navbar-nav ml-auto">
-          <li className="nav-item">
-            <Link className="nav-link" to="/register">Sign Up</Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link" to="/login">Login</Link>
-          </li>
-        </ul>
-      );
+      const { isAuthenticated , user} = this.props.auth;
+      
 
         return (
 
-          <nav className="navbar navbar-expand-sm navbar-dark bg-dark mb-4">
-            <div className="container">
-              <Link className="navbar-brand" to="/">DevConnector</Link>
-              <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#mobile-nav">
-                <span className="navbar-toggler-icon"></span>
-              </button>
-
-              <div className="collapse navbar-collapse" id="mobile-nav">
-                <ul className="navbar-nav mr-auto">
-                  <li className="nav-item">
-                    <Link className="nav-link" to="/profiles"> Developers
-                    </Link>
-                  </li>
-                </ul>
-
-                { isAuthenticated ? authLinks : guestLinks }
-
-              </div>
+          <nav className="header-div">
+            
+            <div className="header-div-name-image-">
+            <Link className="header-brand" to="/dashboard"><Avatar style={{width: 22,  height: 22}} variant =  'circle' alt = '' src = {`/${user.avatar}`}/></Link>
             </div>
+            <div className="v-spacer"/>
+                <Link to="/new-story"><IoIosSend className='header-text-toggle header-item icons-x'/></Link>
+               
+                { isAuthenticated ?
+                 (<AuthHeader  toggle = {this.props.sidebarToggle} auth={this.props.auth}/>)
+                : (<div className="side-link">
+                     <div className="header-item">
+                       <Link className="header-link" to="/login"><IoMdLogIn className="icons-x" /></Link>
+                     </div>
+                   </div>) }
           </nav>
         )
     }
@@ -86,7 +55,8 @@ Navbar.propTypes = {
 }
 
 const mapStateToProps = ( state ) => ({
-  auth: state.auth
+  auth: state.auth,
+  Togle:state.Togle
 });
 
 export default connect( mapStateToProps, { logoutUser, clearCurrentProfile } )( Navbar );

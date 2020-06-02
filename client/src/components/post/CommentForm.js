@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import TextAreaFieldGroup from '../common/TextAreaFieldGroup';
 import { addComment } from '../../actions/postsActions';
+import { IoMdSend  } from 'react-icons/io';
 
 class CommentForm extends Component {
 
@@ -10,7 +10,8 @@ class CommentForm extends Component {
     super(props);
     this.state = {
       text: '',
-      errors:{}
+      errors:{},
+      showcomment:false,
     }
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
@@ -21,49 +22,62 @@ class CommentForm extends Component {
       this.setState({errors: newProps.errors});
     }
   }
-
+  addEmoji = (emoji)=>{
+      //const {text} = this.state
+  }
+  toggleEmojiPiker = ()=>{
+    this.setState({showemojis: !this.state.showemojis})
+  }
   onSubmit(e) {
     e.preventDefault();
 
-    const {user} = this.props.auth;
+    
     const {postId} = this.props;
-
+    if(this.state.text === '')return;
     const newComment = {
       text: this.state.text,
-      name: user.name,
-      avatar: user.avatar
     };
 
     this.props.addComment(postId, newComment);
     this.setState({text: ''});
+    //window.location.reload()
   }
 
   onChange(e) {
     this.setState({[e.target.name]: e.target.value});
   }
-
+  onbluecom=(e)=>{
+    const name = e.target.getAttribute('name')
+    this.setState({[name]: e.target.value.trim().replace(/(\r\n|\n|\r)/gm, "")});
+  }
   render() {
-
-    const {errors} = this.state;
+    const { postedby} = this.props;
+   // const {errors} = this.state;
 
     return (
-      <div className="post-form mb-3">
-        <div className="card card-info">
-          <div className="card-header bg-info text-white">
-            Make a comment...
-          </div>
-          <div className="card-body">
+      <div className="comment-box-container">
+        <div className="comment-input">
+        
+          <div className="">
+            
             <form onSubmit={this.onSubmit}>
-              <div className="form-group">
-                <TextAreaFieldGroup
-                  placeholder="Reply to post"
-                  name="text"
-                  value={this.state.text}
-                  onChange={this.onChange}
-                  error={errors.text}
-                />
-              </div>
-              <button type="submit" className="btn btn-dark">Submit</button>
+              
+                <div className="message-box">
+                    <div className="spacer"/>
+                    <div className="spacer"/>
+                    <textarea type="text"
+                     placeholder={`Reply to post from @${postedby}`}
+                     name="text"
+                     value={this.state.text}
+                     onChange={this.onChange}
+                     onBlur={this.onbluecom}
+                     className="message-input"></textarea>
+                    <div className="spacer"/>
+                    <button type="submit"  onClick={this.onSubmit} className="message-submit"><IoMdSend className='icons-xx'/></button>
+                    <div className="spacer"/>
+               </div>
+              
+             
             </form>
           </div>
         </div>

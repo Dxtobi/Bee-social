@@ -12,14 +12,10 @@ const InputGroup = ({
   onChange
 }) => {
   return (
-    <div className="input-group mb-3">
-      <div className="input-group-prepend">
-        <span className="input-group-text">
-          <i className={ icon }/>
-        </span>
-      </div>
+    <div className="form-group-txf">
+      
       <input
-        className={ classnames('form-control form-control-lg', {
+        className={ classnames('form-text-input', {
           'is-invalid': error
         } ) }
         placeholder={ placeholder }

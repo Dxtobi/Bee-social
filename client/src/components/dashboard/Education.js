@@ -13,33 +13,25 @@ class Education extends Component {
   render() {
 
   const education = this.props.education.map( edu => (
-      <tr key={edu._id}>
-        <td>{edu.school}</td>
-        <td>{edu.degree}</td>
-        <td>
+      <div key={edu._id}>
+        <div>{edu.school}</div>
+        <div>{edu.degree}</div>
+        <div>
         <Moment format="YYYY/MM/DD">{edu.from}</Moment> -
           { edu.to === null ? (' Now') : <Moment format="YYYY/MM/DD">{edu.to}</Moment> }
-        </td>
-        <td><button
+        </div>
+        <div><button
               onClick={ this.onDeleteClick.bind(this, edu._id) }
-              className="btn btn-danger">Delete</button></td>
-      </tr>
+              className="btn-icon delete-icon"/></div>
+      </div>
     ));
 
     return(
-      <div>
-        <h4  className="mb-4"> Education Credentials</h4>
-        <table className="table">
-          <thead>
-            <tr>
-              <th>School</th>
-              <th>Degree</th>
-              <th>Years</th>
-              <th></th>
-            </tr>
+      <div className='experience-div place-at-center'>
+        <h4  className="color-blue"> Exducation</h4>
+        
               { education }
-          </thead>
-        </table>
+         
       </div>
     )
   }

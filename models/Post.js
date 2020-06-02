@@ -3,19 +3,37 @@ const Schema = mongoose.Schema;
 
 const PostSchema = new Schema({
    user: {
-       type: Schema.Types.ObjectId,
-       ref: 'users'
-   },
+    type: Schema.Types.ObjectId,
+    ref: 'users'
+    },
     text: {
        type: String,
-       required: true
-   },
-    name: {
-       type: String
-   },
-    avatar: {
-       type: String
-   },
+    },
+    postImage: [],
+    postImageData: [],
+    repost: {
+        type:Boolean,
+        default:false
+     },
+    postedby: {
+        type: Schema.Types.ObjectId,
+        ref: 'users'
+     },
+    webSites: {
+        type: String
+     },
+     
+     companyName: {
+     type: String
+     },
+    reported:{
+        type:Boolean,
+        default:false
+    },
+    promoted:{
+        type:Number,
+        default:1
+    },
     likes: [
         {
             user: {
@@ -24,26 +42,25 @@ const PostSchema = new Schema({
             }
         }
     ],
-    comments: [
+    bookmarked: [
         {
             user: {
-               type: Schema.Types.ObjectId,
-               ref: 'users'
-            },
-            text: {
-               type: String,
-               required: true
-            },
-            name: {
-               type: String
-            },
-            avatar: {
-               type: String
-            },
-            date: {
-                type: Date,
-                default: Date.now
+                type: Schema.Types.ObjectId,
+                ref: 'users'
             }
+        }
+    ],
+    
+    tags:  [],
+    comments: {
+        type:Number,
+        default:0
+    },
+    lastcomments:[ {
+           comment : {
+            type:Schema.Types.ObjectId,
+            ref: 'comment'
+         }
         }
     ],
     date: {

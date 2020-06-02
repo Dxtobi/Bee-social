@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { loginUser } from '../../actions/authActions';
 import TextFieldGroup from '../common/TextFieldGroup';
+import { Link } from 'react-router-dom';
 
 class Login extends Component {
 
@@ -24,14 +25,14 @@ class Login extends Component {
 
   componentDidMount(){
     if( this.props.auth.isAuthenticated ){
-      this.props.history.push( '/dashboard' );
+      this.props.history.push( '/feed' );
     }
   }
 
   componentWillReceiveProps( nextProps ){
 
     if( nextProps.auth.isAuthenticated ){
-        this.props.history.push( '/dashboard' );
+        this.props.history.push( '/feed' );
     }
 
     if( nextProps.errors ){
@@ -53,12 +54,12 @@ class Login extends Component {
     const { errors } = this.state;
 
         return (
-          <div className="login">
+          <div className="login Contents_App">
               <div className="container">
-                <div className="row">
-                  <div className="col-md-8 m-auto">
-                    <h1 className="display-4 text-center">Log In</h1>
-                    <p className="lead text-center">Sign in to your DevConnector account</p>
+                <div className="">
+                  <div className="">
+                    <h1 className="color-green">Log In</h1>
+                    <p className="">Sign in to your Pip account</p>
                     <form noValidate onSubmit={ this.onSubmit }>
                     <TextFieldGroup
                       name="email"
@@ -76,9 +77,12 @@ class Login extends Component {
                         type="password"
                         onChange={ this.onChange }
                         />
-                      <input type="submit" className="btn btn-info btn-block mt-4" />
+                      <input type="submit" value = 'Login' className="btn-submit-login" />
+                      <Link className="" to="/register"> Or Register</Link>
                     </form>
                   </div>
+                  
+                  
                 </div>
               </div>
             </div>

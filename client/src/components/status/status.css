@@ -1,0 +1,45 @@
+.status-submit{
+    border-radius: 20px;
+    border: 1px solid #2196f3;
+    -webkit-border-radius: 20px;
+    outline: none;
+    padding: 5px;
+    width: 200px;
+}
+.status-text{
+    width: inherit;
+    height: 150px;
+    border-radius: 20px;
+    padding: 12px;
+    border: 1px solid #2196f3;
+    text-align: center;
+    outline: none;
+}
+.status-body{
+    overflow: scroll;
+}
+.status-header{
+    display: flex;
+    width: 90%;
+    align-items: center;
+    margin: auto;
+    position: fixed;
+    z-index: 1000;
+    top: 50px;
+    left: 20px;
+}
+
+.cards-sliders{
+    position: relative;
+    display: grid;
+    grid-gap: 50px;
+    min-width: 195px;
+    margin: 0 auto;
+}
+.cards-sliders:after{
+    content:'';
+    display:block;
+    position: absolute;
+    top: 0;
+    left: 0;
+}

@@ -4,15 +4,17 @@ const Validator = require( 'validator' );
 module.exports = function validatePostInput( data ){
     
     let errors = { };
-    
-    data.text = !isEmpty( data.text ) ? data.text : '';
+    //console.log(data)
+    data = !isEmpty( data ) ? data : '';
      
-    if( !Validator.isLength( data.text, { min: 10, max: 300 } ) ){
-        errors.text = 'Post must be between 10 and 300 characters!';
+    if( !Validator.isLength( data.text, { min: 0, max: 300 } ) ){
+        errors.text = 'Post must be between 0 and 300 characters!';
+       // console.log(errors)
     }
     
-    if( Validator.isEmpty( data.text ) ){
+    if(data.text === ' ' || data.text === '  ' || data.text === '   ' || data.text === '    '|| data.text === '     '){
         errors.text = 'Text field is required!';
+       // console.log(errors)
     }
     
     

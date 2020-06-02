@@ -1,83 +1,227 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
 import { Link } from 'react-router-dom';
-import { deletePost, addLike, removeLike } from "../../actions/postsActions";
+import { deletePost, addLike,  bookmark, reportPost } from "../../actions/postsActions";
+import Postimg from './Postimg';
+import {  MdModeComment ,MdReport} from "react-icons/md";
+//import {GiRapidshareArrow,} from 'react-icons/gi'
+import {IoMdHeartEmpty , IoMdHeart, IoIosArrowUp, IoIosArrowDown} from 'react-icons/io'
+import {    TiDelete } from "react-icons/ti";
+import { FiArrowUpRight, FiRepeat } from 'react-icons/fi';
+import { Avatar } from '@material-ui/core';
+//import {findlink} from '../common/posttext'
+import Autolinker from "autolinker";
+import moment from 'moment'
+import Comment from './comment';
 
 class PostItem extends Component {
+  state = {
+   marked:false,
+    postlike : 0,
+    postUserPro : '',
+    liked :false,
+    showmenu :false,
+    countmarked:0,
+  }
 
-  onDeleteClick(id){
+componentDidMount() {
+  const { post } = this.props;
+  let isliked =this.findUserLike(post.likes)
+  let mark = this.findUserLike(post.bookmarked)
+  this.setState({
+    postlike : post.likes.length,
+    countmarked : post.bookmarked.length,
+    postUserHandle : post.user.handle,
+    marked : mark,
+    postUserPro : post.user.userProgress,
+    profileimg : post.user.userImageData,
+    postUserID : post.user._id,
+    liked : isliked
+  })
+  // console.log(this.props.post.user.userProgress)
+}
+  onDeleteClick=(id)=>{
     this.props.deletePost(id);
   }
-
-  onLikeClick(id){
-    this.props.addLike(id);
+  
+  onLikeClick=()=>{
+    let id = this.props.post._id
+     if(!this.state.liked){
+        this.setState({
+          postlike : this.state.postlike+1,
+          liked :true
+        })
+        this.props.addLike(id);
+        // window.scrollTo(0, localStorage.getItem('scrollpossition'))
+        return
+     }else{
+      this.setState({
+        postlike : this.state.postlike-1,
+        liked :false
+      })
+      this.props.addLike(id);
+     }
+   return
   }
-
-  onUnlikeClick(id){
-    this.props.removeLike(id);
+  onMarkedClick=()=>{
+    let id = this.props.post._id
+     if(!this.state.marked){
+        this.setState({
+          countmarked : this.state.countmarked+1,
+          marked :true
+        })
+        this.props.bookmark(id);
+        //add
+        return
+     }else{
+      this.setState({
+        countmarked : this.state.countmarked-1,
+        marked :false
+      })
+      //remove 
+      this.props.bookmark(id);
+     }
+   return
   }
-
-  findUserLike(likes) {
+ 
+  findUserLike=(likes)=> {
     const { auth } = this.props;
-
-    if(likes.filter(like => like.user === auth.user.id).length > 0) {
-      return true;
-    } else {
-      return false;
+    if(likes.length > 0){
+      if(likes.filter(like => like.user === auth.user.id).length > 0) {
+        return true;
+      } else {
+        return false;
+      }
     }
   }
-
+  
+  toglemenu =()=>{
+    this.setState({
+      showmenu :!this.state.showmenu
+    })
+  }
+  onReportPost =(id)=>{
+    this.props.reportPost(id)
+    this.toglemenu()
+  }
+  
   render() {
 
     const { post, auth, showActions } = this.props;
-
-
+   // console.log(this.props)
     return (
-      <div className="card card-body mb-3">
-        <div className="row">
-          <div className="col-md-2">
-            <a href="profile.html">
-              <img className="rounded-circle d-none d-md-block"
-                   src={post.avatar}
-                   alt=""/>
-            </a>
-            <br/>
-            <p className="text-center">{post.name}</p>
+       <div>
+        <div className="feed_card">
+          {this.state.showmenu?
+            <div className="post-model">
+              <div className="post-model-item" onClick={e=>this.onReportPost(post._id)}>
+                      <small>Report this post</small><MdReport className='icons'/>
+              </div>
+              
+                    
+                     { post.user._id === auth.user.id || auth.user.admin? 
+                     <div className="post-model-item" onClick={e=>this.onDeleteClick(post._id)}>
+                               <small>Delete this post</small> <TiDelete
+                                  onClick={e=>this.onDeleteClick(post._id)}
+                                  className="icons red"
+                                />
+                      </div>
+                                :null
+                     }
+                      {auth.user.admin && post.promoted===2 ? 
+                     <div className="post-model-item" onClick={e=>this.props.approvePost(post._id)}>
+                               <small>Approve ads</small> <TiDelete
+                                  onClick={e=>this.onDeleteClick(post._id)}
+                                  className="icons"
+                                />
+                      </div>
+                                :null
+                     }
+                     
+              
+            </div>:null
+          }
+          <div className="feed_header">
+          <div className={post.user.userProgress === 3  ? `feed-profile-img` : ''}><Link to={`/profile/${post.user._id}`}><Avatar style={{width: 30,  height: 30}} variant =  'circle' src={`/${post.user.userImageData}`} alt={''}  /></Link></div>
+            <div className="feed-handle-text">
+              {this.state.postUserHandle}
+              <small style={{ fontSize:12, fontWeight:10}}>{` ${moment.parseZone(post.date).fromNow()}`}</small>
+            </div>
+           
+            <div className='v-spacer'/>
+            
+            {this.state.showmenu? <IoIosArrowUp  onClick={this.toglemenu} className='icons'/>:<IoIosArrowDown  onClick={this.toglemenu} className='icons' />}
           </div>
-          <div className="col-md-10">
-            <p className="lead">{post.text}</p>
-            { showActions ? (<span>
-                    <button
-                      onClick={this.onLikeClick.bind(this, post._id)} type="button" className="btn btn-light mr-1">
-                    <i
-                      className={ classnames('fas fa-thumbs-up',
-                        {'text-info': this.findUserLike(post.likes)
-                        })}
-                    ></i>
-                    <span className="badge badge-light">{post.likes.length} </span>
-                  </button>
-                  <button
-                    onClick={this.onUnlikeClick.bind(this, post._id)} type="button" className="btn btn-light mr-1">
-                    <i className="text-secondary fas fa-thumbs-down"></i>
-                  </button>
-                  <Link to={`/post/${post._id}`} className="btn btn-info mr-1">
-                    Comments
-                  </Link>
-                    { post.user === auth.user.id ? (
-                      <button
-                        onClick={this.onDeleteClick.bind(this, post._id)}
-                        type="button"
-                        className="btn btn-danger mr-1"
-                      >
-                        <i className="fas fa-times"/>
-                      </button>
-              ) : null }
-            </span>) : null}
+          <div className="feed-body-container">
+         <div>
+      
+              
+              {post.postImageData.length > 0 ? (<Postimg imageSrc = {post.postImageData} imgAlt = {''}/>):null}
+              <div className= ''>
+                <small>
+                  {
+                      post.tags.map(t=>{
+                        return (
+                          <b style={{color:'#ff8d00', fontSize:12}} key={t}>{`${t}`}</b>
+                        )
+                      })
+                  }
+                </small>
+              </div>
+              {post.text ?(<div className={post.text.length < 150 && post.postImageData.length<1  ? `feed_text_small` : 'feed_text'} >{Autolinker.link(post.text)}</div>):null}
+              
+              <div className='mini_feed_footer'>
+                <small style={{display:'flex', fontWeight:10}}>{this.state.postlike}likes. <div className='spacer'/> {post.comments}comments. <div className='spacer'/>{this.state.countmarked}share </small>
+              </div>
+            { showActions ? (
+                  <div className='feed_footer'>
+
+                    <div  className="btn btn-light mr-1">
+                          <div className='feed-icon-mini-container'>
+                            {!this.state.liked ?
+                              (<IoMdHeartEmpty onClick={this.onLikeClick} className='icons'/>)
+                              :
+                              (<IoMdHeart onClick={this.onLikeClick} style={{color:'red'}} className='icons like-color'/>)
+                            }
+                          </div>
+                    </div>
+
+                    <div className='spacer'/>
+
+                    <Link to={`/post/${post._id}`} className='special_a_tags'>
+                    <MdModeComment className='icons'/>
+                    </Link>
+
+                    <div className='spacer'/>
+                     
+                         <FiRepeat
+                          onClick={this.onMarkedClick}
+                          className={`icons ${this.state.marked? 'like-color' : null}`}
+                        />
+
+
+            </div>) : null}
+             {post.promoted === 3 ?<small>Promoted <FiArrowUpRight/></small>:null}
+                            {
+                              auth.user.admin?
+                              (
+                              <div className='admin-view-on-post'>
+                                {post.reported ? <small>Reported</small>:null}
+                                {post.promoted === 2 ?<small>Pre Promoted <FiArrowUpRight/></small>:null}
+                              
+                              </div>
+                              )
+                              :null
+                            }
+          </div>
           </div>
         </div>
-      </div>
+         {
+          this.props.singlePost === true ? null : post.lastcomments.length > 1 ? <Comment comment={post.lastcomments[post.lastcomments.length-1]}/> 
+          : post.lastcomments.length === 1 ? <Comment comment={post.lastcomments[0]}/>: null
+         }
+        </div>
     );
   }
 }
@@ -90,11 +234,12 @@ PostItem.propTypes = {
   auth: PropTypes.object.isRequired,
   deletePost: PropTypes.func.isRequired,
   addLike:PropTypes.func.isRequired,
-  removeLike:PropTypes.func.isRequired
+  reportPost:PropTypes.func.isRequired,
+  bookmark:PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
   auth: state.auth
 })
 
-export default connect(mapStateToProps, {deletePost, addLike, removeLike})(PostItem);
+export default connect(mapStateToProps, {deletePost, addLike,bookmark, reportPost})(PostItem);

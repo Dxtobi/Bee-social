@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-
+//{ info && <small className="form-text text-muted">{ info }</small>}
 const SelectListGroup = ({
   name,
   value,
@@ -18,9 +18,9 @@ const SelectListGroup = ({
   ))
 
   return (
-    <div className="form-group">
+    <div className="form-group-txf">
       <select
-        className={ classnames('form-control form-control-lg', {
+        className={ classnames('form-text-input', {
           'is-invalid': error
         } ) }
         name={ name }
@@ -28,7 +28,7 @@ const SelectListGroup = ({
         onChange={ onChange }>
           { selectOptions }
         </select>
-        { info && <small className="form-text text-muted">{ info }</small>}
+        
         { error && ( <div className="invalid-feedback">{ error }</div> ) }
     </div>
   )

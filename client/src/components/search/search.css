@@ -1,0 +1,13 @@
+.scontainer{
+    display: flex;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    width: 90%;
+    margin: auto;
+    -webkit-box-shadow: 0px 0px 20px 0px #0000003d;
+    box-shadow: 0px 0px 20px 0px #0000003d;
+    border-radius: 50px;
+    border: 1px solid white;
+    padding: 6px;
+}
+

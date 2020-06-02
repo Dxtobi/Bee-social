@@ -1,0 +1,76 @@
+.a-sidebar{
+    height: 100vmax;
+    width: 20%;
+    background: #0f181f00;
+    box-shadow: 7px 6px 20px 0px #04030326;
+    top: 0;
+    position: fixed;
+}
+.a-butten{
+    width: max-content;
+}
+.a-post-header{
+    display: flex;
+    font-size: .8rem;
+    padding: .8rem;
+}
+
+.a-user-holder{
+    display: flex;
+    flex: 1;
+    width: 80%;
+    margin: auto;
+    justify-content: space-between;
+    background: #00000036;
+    padding: .8rem;
+    border-radius: 50rem;
+    margin-top: 12px;
+}
+.a-post-content{
+    padding: 1rem;
+    margin-left: .8rem;
+}
+.a-post-container{
+ width: 50%;
+ margin: auto;
+}
+.a-post-header-item{
+    margin: auto;
+
+}
+.a-inline-form{
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+}
+.a-tag-holder{
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    width: 15rem;
+    background: #0d141999;
+    padding: 0.3rem;
+    border-radius: 20rem;
+    margin-top: 0.4rem;
+}
+.card_box{
+ width: 5rem;
+}
+.a-list{
+ width: 100%;
+}
+.admin_wrapper{
+    width: 100%;
+    display: flex;
+}
+.a-link-list {
+    width: 100%;
+    display: flex;
+    padding: .5rem;
+}
+.a-view{
+    width: 80%;
+    margin-left: 1rem;
+}

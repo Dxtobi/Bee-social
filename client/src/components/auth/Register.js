@@ -4,26 +4,28 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { registerUser } from '../../actions/authActions';
 import TextFieldGroup from '../common/TextFieldGroup';
-
+//import SimpleReactValidator from 'simple-react-validator';
 class Register extends Component {
 
     constructor(){
       super();
       this.state = {
-        name: '',
+        firstname: '',
+        secondname: '',
         email: '',
+        handle: '',
         password: '',
         password2: '',
         errors: { }
       }
-
+     // this.validator = new SimpleReactValidator();
       this.onChange = this.onChange.bind( this );
       this.onSubmit = this.onSubmit.bind( this );
     }
 
     componentDidMount(){
       if( this.props.auth.isAuthenticated ){
-        this.props.history.push( '/dashboard' );
+        this.props.history.push( '/feed' );
       }
     }
 
@@ -40,13 +42,23 @@ class Register extends Component {
     onSubmit( e ){
       e.preventDefault();
       const newUser = {
-        name: this.state.name,
+        firstname: this.state.firstname,
+        secondname: this.state.secondname,
         email: this.state.email,
+        handle: this.state.handle,
         password: this.state.password,
         password2: this.state.password2,
       }
-      console.log( newUser );
-      this.props.registerUser( newUser, this.props.history );
+    //  console.log( newUser );
+      if (newUser.firstname === '' || newUser.secondname === '') {
+        return
+      }else{
+        console.log( newUser )
+        this.props.registerUser( newUser, this.props.history );
+        
+        //this.forceUpdate();
+      }
+     
     }
 
     render() {
@@ -54,20 +66,32 @@ class Register extends Component {
       const { errors } = this.state;
 
         return (
-          <div className="register">
+          <div className="register Contents_App">
               <div className="container">
                 <div className="row">
                   <div className="col-md-8 m-auto">
-                    <h1 className="display-4 text-center">Sign Up</h1>
-                    <p className="lead text-center">Create your DevConnector account</p>
+                    <h1 className="display-4 text-center">Pipe </h1>
+                    <p className="lead text-center">Sign Up</p>
                     <form noValidate onSubmit={ this.onSubmit }>
                     <TextFieldGroup
-                      name="name"
-                      placeholder="Name"
-                      value={ this.state.name }
-                      error={ errors.name }
+                      name="firstname"
+                      placeholder="First Name"
+                      value={ this.state.firstname }
+                      error={ errors.secondname }
                       onChange={ this.onChange }
+                      reqired
                       />
+                      
+                      <TextFieldGroup
+                      name="secondname"
+                      placeholder="Second Name"
+                      value={ this.state.secondname }
+                      error={ errors.second }
+                      onChange={ this.onChange }
+                      reqired
+                      />
+                      
+                      
                       <TextFieldGroup
                         type="email"
                         name="email"
@@ -75,8 +99,20 @@ class Register extends Component {
                         value={ this.state.email }
                         error={ errors.email }
                         onChange={ this.onChange }
-                        info=" This site uses Gravatar so if you want a profile image, use a Gravatar email"
+                        info=""
+                        reqired
                         />
+                      
+                       <TextFieldGroup
+                        type="text"
+                        name="handle"
+                        placeholder="Uniqe handle"
+                        value={ this.state.handle }
+                        error={ errors.handle }
+                        onChange={ this.onChange }
+                        info=""
+                        />
+
                       <TextFieldGroup
                         type="password"
                         name="password"
@@ -93,7 +129,7 @@ class Register extends Component {
                         error={ errors.password2 }
                         onChange={ this.onChange }
                         />
-                      <input type="submit" className="btn btn-info btn-block mt-4" />
+                      <input type="submit" className="btn-submit" />
                     </form>
                   </div>
                 </div>

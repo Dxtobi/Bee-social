@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-
+//{ info && <small className="form-alart">{ info }</small>}
 const TextFieldGroup = ({
   name,
   placeholder,
@@ -11,13 +11,14 @@ const TextFieldGroup = ({
   info,
   type,
   onChange,
-  disabled
+  disabled,
+  onFocus
 }) => {
   return (
-    <div className="form-group">
+    <div className="form-group-txf">
       <input
         type={ type }
-        className={ classnames('form-control form-control-lg', {
+        className={ classnames('form-text-input', {
           'is-invalid': error
         } ) }
         placeholder={ placeholder }
@@ -25,9 +26,10 @@ const TextFieldGroup = ({
         value={ value }
         onChange={ onChange }
         disabled={ disabled }
+        onFocus={onFocus}
         />
-        { info && <small className="form-text text-muted">{ info }</small>}
-        { error && ( <div className="invalid-feedback">{ error }</div> ) }
+        
+        { error && ( <div className="danger-text">{ error }</div> ) }
     </div>
   )
 }
@@ -41,6 +43,7 @@ TextFieldGroup.propTypes = {
   info:PropTypes.string,
   type:PropTypes.string.isRequired,
   onChange:PropTypes.func.isRequired,
+  onFocus:PropTypes.func,
   disabled:PropTypes.string
 }
 

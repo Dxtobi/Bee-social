@@ -1,0 +1,42 @@
+.profile-img img{
+    width: 100px;
+    height: 100px;
+    box-sizing: border-box;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    -ms-border-radius: 50%;
+    -o-border-radius: 50%;
+}
+.message-icon{
+    background-color: #737477;
+    width: 30px;
+    text-align: center;
+    padding-top: 6px;
+    border-radius: 50%;
+}
+.single-profile{
+    text-align: center;
+}
+.header-profile{
+    display: flex;
+}
+.unfollow{
+    background: #737477!important;
+}
+.btn-add-follow{
+    background: #2396fb;
+    padding: 5px;
+    border-radius: 50px;
+    color: aliceblue;
+    text-decoration: none;
+}
+.small{
+    margin:auto;
+    background: #737477;
+      text-align:center;
+      padding: 0.4rem;
+      border-radius: 10px;
+      font-family: cursive;
+      
+    }

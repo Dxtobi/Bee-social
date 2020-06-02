@@ -6,13 +6,50 @@ import {
   CLEAR_CURRENT_PROFILE,
   GET_ERRORS,
   SET_CURRENT_USER,
-  GET_PROFILES
+  GET_PROFILES,
+  PROFILE_UNFOLLOW,
+  PROFILE_FOLLOW
 } from './types';
+ 
+
+export const follow = (id) => dispatch => {
+  axios
+    .patch(`/api/profile/follow/${id}`, )
+    .then(res =>
+      dispatch({
+        type: PROFILE_FOLLOW,
+        payload: res.data
+      })
+    )
+    .catch(err =>{
+      dispatch({
+        type: PROFILE_FOLLOW,
+        payload: null
+      })
+    })
+}
+
+export const unfollow = (id) => dispatch => {
+  axios
+    .delete(`/api/profile/unfollow/${id}`)
+    .then(res =>
+      dispatch({
+        type: PROFILE_UNFOLLOW,
+        payload: res.data
+      })
+    )
+    .catch(err =>{
+      dispatch({
+        type: PROFILE_UNFOLLOW,
+        payload: null
+      })
+    })
+}
 
 export const getCurrentProfile = () => dispatch => {
 
   dispatch( setProfileLoading() );
-
+  //console.log('hited actions')
   axios
     .get( '/api/profile' )
     .then( res =>
@@ -23,18 +60,37 @@ export const getCurrentProfile = () => dispatch => {
     )
     .catch( err =>
         dispatch({
-          type: GET_PROFILE,
-          payload: { }
+          type: GET_ERRORS,
+          payload: err.message
         })
       );
 };
 
-export const getProfileByHandle = (handle) => dispatch => {
+export const getProProfile = () => dispatch => {
 
-  dispatch( setProfileLoading() );
-
+  //dispatch( setProfileLoading() );
+  //console.log('hited actions')
   axios
-    .get(`/api/profile/handle/${handle}` )
+    .get( '/api/posts/status/get' )
+    .then( res =>
+      dispatch({
+        type: GET_PROFILES,
+        payload: res.data
+      })
+    )
+    .catch( err =>
+        dispatch({
+          type: GET_ERRORS,
+          payload: err.message
+        })
+      );
+};
+
+export const getPeopleYouKnow = () => dispatch => {
+ // dispatch( setProfileLoading() );
+//console.log('hited actions')
+  axios
+    .get(`/api/profile/peopleyouknow` )
     .then( res =>
       dispatch({
         type: GET_PROFILE,
@@ -43,8 +99,28 @@ export const getProfileByHandle = (handle) => dispatch => {
     )
     .catch( err =>
         dispatch({
-          type: GET_PROFILE,
-          payload: null
+          type: GET_ERRORS,
+          payload: err.message
+        })
+      );
+};
+
+/////
+export const getProfileByHandle = (id) => dispatch => {
+  dispatch( setProfileLoading() );
+console.log('hited actions')
+  axios
+    .get(`/api/profile/handle/${id}` )
+    .then( res =>
+      dispatch({
+        type: GET_PROFILE,
+        payload: res.data
+      })
+    )
+    .catch( err =>
+        dispatch({
+          type: GET_ERRORS,
+          payload: err.message
         })
       );
 };
@@ -52,46 +128,79 @@ export const getProfileByHandle = (handle) => dispatch => {
 // Create Profile
 export const createProfile = (profileData, history) => dispatch => {
   axios
-    .post('/api/profile', profileData)
+    .put('/api/profile', profileData)
     .then(res => history.push('/dashboard'))
     .catch(err =>
-      dispatch({
-        type: GET_ERRORS,
-        payload: err.response.data
-      })
+      
+    console.log(err)
+      
     );
 };
 
-export const addExperience = (expData, history) => dispatch => {
+export const createAdminProfile = (profileData) => dispatch => {
   axios
-    .post('/api/profile/experience', expData)
-    .then(res => history.push('/dashboard'))
-    .catch( err =>
-      dispatch({
-        type: GET_ERRORS,
-        payload: err.response.data
-      })
+    .post('/api/profile/admin/new', profileData)
+    .then(res => dispatch(getAdminProfile()))
+    .catch(err =>
+      
+      console.log(err)
+      
     );
-}
+};
 
-export const addEducation = (eduData, history) => dispatch => {
+export const editAdminProfile = (id) => dispatch => {
   axios
-    .post('/api/profile/education', eduData)
-    .then(res => history.push('/dashboard'))
-    .catch( err =>
-      dispatch({
-          type: GET_ERRORS,
-          payload: err.response.data
-      })
+    .put(`/api/profile/adminedit/${id}`)
+    .then(res => dispatch(getAdminProfile()))
+    .catch(err =>
+      
+    console.log(err)
+      
     );
-}
+};
+
+export const editProProfile = (id) => dispatch => {
+  axios
+    .put(`/api/profile/editProProfile/${id}`)
+    .then(res => dispatch(getAdminProfile()))
+    .catch(err =>
+      
+    console.log(err)
+      
+    );
+};
+
+export const requestProProfile = (history) => dispatch => {
+  axios
+    .put(`/api/profile/requestProProfile`)
+    .then(res => history.push('/dashboard'))
+    .catch(err =>
+      
+    console.log(err)
+      
+    );
+};
+
+export const getAdminProfile = () => dispatch => {
+  axios
+    .get('/api/profile/admins/all')
+    .then(res => dispatch({
+      type: GET_PROFILES,
+      payload: res.data
+    }))
+    .catch(err =>
+      
+    console.log(err)
+      
+    );
+};
 
 export const getProfiles = () => dispatch => {
 
   dispatch(setProfileLoading());
 
   axios
-    .get('/api/profile/all')
+    .get('/api/profile/profiles')
     .then(res =>
       dispatch({
         type: GET_PROFILES,
@@ -104,40 +213,6 @@ export const getProfiles = () => dispatch => {
         payload: null
       })
     )
-}
-
-export const deleteExperience = (id) => dispatch => {
-  axios
-    .delete(`/api/profile/experience/${id}`)
-    .then(res =>
-      dispatch({
-        type: GET_PROFILE,
-        payload: res.data
-      })
-    )
-    .catch(err =>{
-      dispatch({
-        type: GET_ERRORS,
-        payload: err.response.data
-      })
-    })
-}
-
-export const deleteEducation = (id) => dispatch => {
-  axios
-    .delete(`/api/profile/education/${id}`)
-    .then(res =>
-      dispatch({
-        type: GET_PROFILE,
-        payload: res.data
-      })
-    )
-    .catch(err => {
-      dispatch({
-        type: GET_ERRORS,
-        payload: err.response.data
-      })
-    })
 }
 
 export const deleteAccount = () => dispatch => {

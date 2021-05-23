@@ -4,7 +4,7 @@ import Spinner from '../common/Spinner';
 //import getImage from "../../utils/getImage";
 import {  makeASearch} from "../../actions/search";
 import {FaUsers } from "react-icons/fa";
-import { IoLogoOctocat, IoIosSearch} from "react-icons/io";
+import {  IoIosSearch} from "react-icons/io";
 import { Link } from 'react-router-dom';
 import { MdRssFeed } from "react-icons/md";
 import{ Avatar} from '@material-ui/core'
@@ -42,7 +42,7 @@ class MainSearch extends Component {
  */
   // FUNCTIONS
   searchResults = (data)=>{
-    if(data.length < 1){
+    if(data.length === 0 && this.state.searchValue.length>0){
       return  (<div style={{textAlign:'center'}}>No Match found for your search</div>)
     }
      return data.map((data, i) => {
@@ -53,8 +53,10 @@ class MainSearch extends Component {
      return (<Link to={data.handle_link} className='search_list' key={i}>
         <Avatar src={data.image} alt={data.name} />
         <div className='handle_and_name'>
+          
+        <small>@{data.handle}</small>
           <div>{data.name}</div>
-          <small>{data.handle}</small>
+          
         </div>
         
         <div>
@@ -109,7 +111,7 @@ class MainSearch extends Component {
     }else{
       return(
         <div className='search-is'>
-           <small ><IoLogoOctocat/> Cat</small>
+           <small >profile</small>
         </div>
       )
     }

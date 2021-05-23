@@ -1,121 +1,158 @@
 import React from 'react'
 //import { Link } from "react-router-dom";
 import './messages.css'
-//import { socket } from "../../App";
-import io from 'socket.io-client'
-import {Link} from 'react-router-dom'
+import {Link, Redirect} from 'react-router-dom'
 import Avatar from '@material-ui/core/Avatar';
 import PropTypes from 'prop-types';
-import Media from './media';
+//import Media from './media';
 import {connect} from 'react-redux';
-import { IoIosArrowBack, IoMdVideocam, IoMdSend} from "react-icons/io";
+import { IoIosArrowBack, IoMdSend} from "react-icons/io";
 import { getProfileByHandle } from '../../actions/profileActions';
-import { sendMessage , getMessages, deleteMessage, setTypingTrue } from "../../actions/messageAction";
+import { sendMessage, getMessages, deleteMessage, setTypingTrue, seenMessage } from "../../actions/messageAction";
+import { socketNewMessage} from "../../actions/socketIo";
 import { AiFillSmile } from 'react-icons/ai';
-import { MdPhone , MdDelete} from 'react-icons/md';
 import  { SpinnerDots } from '../common/Spinner';
-import  { dateGen } from '../../utils/dateGenerator'
+//import  { dateGen } from '../../utils/dateGenerator'
 import MP from './MediaPreviw';
-//import moment from  'moment'
-
+import RenderMsg from  './RenderMsg'
+import {socket} from '../../utils/socketGlobal';
 let formobj = new FormData()
-let msgc = []
 
-let socket = io.connect('/conversation')
+
+//let socket = null//io.connect('/conversation')
 class Conversation extends React.Component {
-   constructor(){
-     super();
-  this.state = { 
-        socketid : '',
-        messagetxt : '',
-        profile : {},
-        messages : [],
-        isloading:true,
-        showMsgOption :false,
-        messageImages:[],
-        reload:false
-     }
-    // this.mRef = React.createRef()
-    //const messagesEnd = React.createRef()
-    }
-componentDidUpdate(){
-      this.scrollBottom()
-}
-componentWillReceiveProps(nextProps) {
-     // console.log(nextProps.messages)
+
+ 
+   state = { 
+      socketid : '',
+      messagetxt : '',
+      profile : {},
+      messages : [],
+      isLoading:true,
+      showMsgOption :false,
+      messageImages:[],
+      reload: false,
+      lastMessageId: '',
+      typing: false,
+      in: false,
+      notfound:false
+   }
+   
+ 
+  componentWillReceiveProps(nextProps) {
+
+
       if(nextProps.messages.sent){
          this.clearFORMDATA()
+    }
+      if (this.props.location.state===undefined) {
+        return this.setState({notfound:true})
       }
-      if(nextProps.messages.loading === false ) {
-       // console.log(nextProps)
-          this.setState({isloading : false, profile : nextProps.profile.profile})
-          if(nextProps.messages){
-            
-              msgc = nextProps.messages
-             // messages = msgc
-             
-              this.setState({messages : nextProps.messages.messages})
-          }
+      if(nextProps.messages.loading === false && this.props.location.state ) {
+      
+          this.setState({isLoading : false, profile : nextProps.profile.profile})
+          if(nextProps.messages ){
           
-          if(msgc.length > 0){
-            this.setState({messages : msgc})
-            }
+            let all = []
+            let all_msg = nextProps.messages.messages, hash =Object.create(null)
+            all_msg.forEach((u)=>{
+              let key = JSON.stringify(u);
+              hash[key] =(hash[key]||0)+1;
+              if(hash[key]>=2){
+                return null
+              }else{
+                return all.push(JSON.parse(key))
+              }
+            })
+            this.setState({messages : all, lastMessageId:nextProps.messages.messages[nextProps.messages.messages.length - 1]._id})
+
+          }
            // console.log(this.state.messages)
           this.scrollBottom()
           //
-          
         }
+
+  this.scrollBottom();
       }
-//componentWillMount(){
- 
-  //this.setState({isloading : true, profile : {}, messages :[]})
-//}
-componentDidMount() {
-  //console.log('mount')
- 
-     //this.setState({ isloading: false})
-      //const idtostring = `${this.props.auth.user.id}-${this.props.match.params.id}-message`
-      //console.log(idtostring)
-      socket.on('ID', ()=>{
-        socket.emit('USER_ID', this.props.auth.user.id)
-      })
-     socket.on(/*idtostring*/'MESSAGE', data => {
-        console.log("resiving..............")
-        if(Object.keys(this.state.messages).length > 0 && Object.keys(data).length > 0){
-         this.setState({messages : [...this.state.messages, data]})
-       // console.log(this.state.messages)
-        }else{
-         this.setState({messages : data })
-        }
-     //   console.log(data)
-      })
-      if(this.props.match.params.id) {
-        this.props.getProfileByHandle(this.props.match.params.id);
+
+
+  
+  componentDidMount() {
+    this.scrollBottom()
+    if (this.props.location.state===undefined) {
+      return this.setState({notfound:true})
+    }
+    this.clearFORMDATA()
+
         this.props.getMessages(this.props.match.params.id);
-      }
+         
+  
+
+      let room = this.props.match.params.id;
+      let otherUsersId 
+  if (this.props.location.state){
+    this.props.seenMessage(this.props.location.state.id)
+    this.props.getProfileByHandle(this.props.location.state.id);
+    otherUsersId = this.props.location.state.id
+  }
+  
+    socket.emit('subscribe', room, otherUsersId);
+
+  socket.on('in', () => {
+    this.setState({in:true})
+  })
+
+  socket.on('out', () => {
+    this.setState({in:false, typing:false})
+  })
+
+  socket.on('notTyping', () => {
+    this.setState({ typing:false})
+  })
+
+  socket.on('typing',()=>{
+    this.setState({typing:true})
+  })
+
+  socket.on('incoming_message', (e) => {
+    if (e.message._id === this.state.lastMessageId) {
+      console.log('same',)
+      return
+    } else {
+      this.addNewMessage(e)
+    }
+
+    this.scrollBottom();
+  })
+ 
      this.scrollBottom();
 }
-componentWillUnmount() {
-  socket.emit('disconnect')
-  //io.Socket.close()
+
+  componentWillUnmount() {
+  this.clearFORMDATA()
+    socket.emit('unsubscribe', this.props.match.params.id)
 }
+
+
+addNewMessage = (e) => {
+    this.props.socketNewMessage(e)
+  }
 handlegoback = ()=>{
-  this.setState({isloading : true, messages :[],  profile : {} })
+  this.setState({isLoading : true, messages :[],  profile : {}, typing:false })
   this.props.history.goBack()
 }
 scrollBottom = () => {
-        this.messagesEnd.scrollIntoView();
+  if (this.messagesEnd) {
+    this.messagesEnd.scrollIntoView();
+    }
 }
-wasPreesed = () =>{
+wasPressed = () =>{
  // console.log('pressed---')
   this.setState({showMsgOption : !this.state.showMsgOption})
 }
 deleteMessage=(id)=>{
  // console.log(id)
  this.props.deleteMessage(id)
-}
-onClickMessage=(id)=>{
-  this.setState({showMsgOption:false})
 }
 handleSelectImg(e){
   let imgs = []
@@ -128,157 +165,116 @@ handleSelectImg(e){
       messageImages : imgs
     })
   }
- // formobj.append('postImageData', e.target.files[0])
- //console.log(this.state.messageImage)
-  //this.setState({[e.target.name]: e.target.value});
-  
+
  }
 handleSendMessage = (e) => {
   e.preventDefault();
         const { messagetxt,  profile, /*messageImage*/} = this.state;
         if (messagetxt.trim() === "" && this.state.messageImages.length < 1) {
           this.setState({ error: true });
+          window.alert('error no message to send')
           return;
         }
-        let userId = profile._id
+        let userId = profile.user._id
         formobj.append('text', messagetxt);
         formobj.append('id', userId);
-
-       // console.log(this.state)
-
-        let msg ={
-            message: {text: messagetxt},
-            users: [this.props.auth.user.id, userId],
-            _id: this.props.auth.user.id + new Date(),
-            sender: this.props.auth.user.id,
-            date: new Date(),
-            to:userId,
-          }
-         
-        this.setState({ messagetxt: "" });
-        this.setState({ messageImages: [] });
-        socket.emit('SEND', msg)
-       // this.setState({ reload:true });
-        this.props.sendMessage(formobj, userId);
-       // console.log(formobj.get('text'))
+        formobj.append('conversationId', this.props.match.params.id);
+        this.setState({ messagetxt: "" , typing: false,  messageImages: []});
+        this.props.sendMessage(formobj, this.props.match.params.id);
         this.scrollBottom()
-        
+        socket.emit('notTyping', this.props.match.params.id)
 };
 handleFocus = () =>{
-  this.props.setTypingTrue()
+  socket.emit('typing', this.props.match.params.id)
+  this.props.getMessages(this.props.match.params.id);
+  this.scrollBottom()
 }
 
 clearFORMDATA= ()=>{
   formobj.delete('id')
   formobj.delete('text')
   formobj.delete('msgimg')
+  formobj.delete('conversationId')
  // console.log(formobj)
 }
 
-renderMesages=(profile, messages)=>{
-       // console.log(messages)
-        let msgb
-        let megt = messages.map(msg =>{
-         
-            if (messages.length > 0 || profile !== null || profile !== undefined ) {
-             
-             // msg.users[1].user._id.toString()===profile._id
-            // console.log(msg.message.media, msg.message.text)
-                 if(msg.sender.toString()===profile._id){
-                   
-                   let d = dateGen(new Date(msg.date))
-                 // console.log(`${msg.users[1].user.name} ====sent ==== ${msg.message.text}`)
-                  msgb = (
-                     <div  key = {msg._id} className='msg-container'>
-                       {msg.message.media?<Media className='messageimg-sender' image={msg.message.media}/>:null}
-                       <div className="chat-boble-sender ">
-                         <div className="text-sender ">{msg.message.text}</div>  <small className='msg-small'>{ ` ▶️${d}` }</small>
-                       </div>
-                    </div>
-                  )
-                }else{
-                 
-                //  console.log(`talking with   ${profile._id}`)
-                let d = dateGen(new Date(msg.date))
-                  msgb = (
-                    <div key = {msg._id} className='msg-container'>
-                      {msg.message.media? <Media className='messageimg' image={msg.message.media}/>:null}
-                      {this.state.showMsgOption ? <div className='message-menu' onClick={e=>this.deleteMessage(msg._id)}>Delete <MdDelete /></div>:null}
-                      <div  onClick={this.onClickMessage} onPointerDown ={this.wasPreesed}  className="chat-boble-reciver ">
-                      <div className="text-reciver">{msg.message.text}</div> <small className='msg-small'>{ ` ▶️${d}` }</small>
-                      </div>
-                     </div>
-                      )
-                }
-              
-            
-            }return msgb
-        });
-        return megt
-}
+
     render() {
-          const {profile, isloading, messagetxt, messageImages, messages} = this.state
-          //{reload?this.clearFORMDATA:null}
-         //console.log(messageImages)
-       
-         return (
-         <div>
-       
-            <div id="chat" >
-            <div className="chat-title">
+          const {profile, isLoading, messagetxt, messageImages, messages} = this.state
+         let profileUser = profile.user ? profile.user : profile
+
+            if (this.state.notfound) {
+              return <Redirect to={'/notfound'}/>
+          }
+           if (isLoading || profileUser.handle === undefined ) {
+            return <SpinnerDots /> 
+           }
+      
+      return (
+        <div>
+      
+           <div id="chat" >
+           <div className="chat-title">
+
+             <div className="chat-title-container">
+             <IoIosArrowBack onClick = {this.handlegoback} className='icons title-div'/>
+                 <div className="chat-avatar">
+                   <Link to ={`/profile/${profileUser._id}`}><Avatar alt={profileUser.name} src={`/${profileUser.userImageData}`} /></Link>
+                 </div>
+                 <div className='title-div'>
+                   <div>{`${profileUser.handle}`}</div>
+                    <div style={{color:this.state.in ?'green':'goldenrod'}} className='in_out_ind'>{this.state.in ? 'Live': 'out'}</div>
+                 </div>
+             </div>
+              
+                <div className='active-user-indicator'>
+                   <div style={{color:this.state.in ?'green':'goldenrod'}} >{this.state.typing ? 'typing..': this.state.in ? 'reading..': 'busy'}</div>
+                </div>
+           </div>
+
+
+           <div className="messages">
+           <div style={{marginBottom:3 +`rem`}}/>
+               <div id="messages-content" >
+                  <RenderMsg showMsgOption={this.state.showMsgOption}
+                    profile={profileUser}
+                    messages={messages}
+                    wasPressed={this.wasPressed}
+                    
+                    />
+               </div>
                
-                <IoIosArrowBack onClick = {this.handlegoback} className='icons title-div'/>
-              
-               <div className="chat-avatar">
-                 <Link to ={`/profile/${profile._id}`}><Avatar alt={profile.name} src={`/${profile.userImageData}`} /></Link>
-                 
+
+               <MP images={messageImages}/>
+               <div style={{ float:"left", clear: "both" }}
+                     ref={(el) => { this.messagesEnd = el; }}>
                </div>
-               <div className='title-div'>
-                {isloading || profile.firstname===undefined ? ' ' :`${profile.firstname} ${profile.secondname}`}
-               </div>
-               <div className='spacer'/>
-               <MdPhone style={{display:'none'}} className='icons title-div'/>
-               <IoMdVideocam  style={{display:'none'}} className='icons title-div'/>
-            </div>
-
-
-            <div className="messages">
-            <div style={{marginBottom:3 +`rem`}}/>
-                <div id="messages-content" >
-                      {isloading || profile.firstname===undefined ? <SpinnerDots/> : this.renderMesages(profile, messages)}
-                </div>
-                
-
-                <MP images={messageImages}/>
-                <div style={{ float:"left", clear: "both" }}
-                      ref={(el) => { this.messagesEnd = el; }}>
-                </div>
-            </div>
-            <form onSubmit={this.handleSendMessage} encType='multipart/form-data'>
-              <div className="message-box">
-              
-                  <div className="spacer"/>
-                  <div  className="post -input-buttons">
-                    <label>
-                    <input type="file" className="file-input"  name='msgimg' onChange={(e)=>this.handleSelectImg(e)} multiple/>
-                        <div className='post-preview-img'>
-                          <div  className="message-submit"><AiFillSmile  className='icons-xx'/> </div> 
-                        </div>
-                        
-                    </label>
-                  </div >
-                  <div className="spacer"/>
-                  <textarea type="text" value={messagetxt} onFocus={this.handleFocus} onChange={e => this.setState({ messagetxt: e.target.value })} className="message-input" placeholder="Type message..."></textarea>
-                  <div className="spacer"/>
-                  <button type="submit"  onClick={ this.handleSendMessage} className="message-submit"><IoMdSend className='icons-xx'/></button>
-                  <div className="spacer"/>
-            
-              </div>
-            </form>
-        </div>
-       
-        </div>
-        );
+           </div>
+           <form onSubmit={this.handleSendMessage} encType='multipart/form-data'>
+             <div className="message-box">
+             
+                 <div className="spacer"/>
+                 <div  className="post -input-buttons">
+                   <label>
+                   <input type="file" className="file-input"  name='msgimg' onChange={(e)=>this.handleSelectImg(e)} multiple/>
+                       <div className='post-preview-img'>
+                         <div  className="message-submit"><AiFillSmile  className='icons-xx'/> </div> 
+                       </div>
+                       
+                   </label>
+                 </div >
+                 <div className="spacer"/>
+                 <textarea type="text" value={messagetxt} onFocus={this.handleFocus} onChange={e => this.setState({ messagetxt: e.target.value })} className="message-input" placeholder="Type message..."></textarea>
+                 <div className="spacer"/>
+                 <button type="submit"  onClick={ this.handleSendMessage} className="message-submit"><IoMdSend className='icons-xx'/></button>
+                 <div className="spacer"/>
+           
+             </div>
+              </form> 
+       </div>
+      
+       </div>
+       );
     }
 }
 Conversation.propTypes = {
@@ -286,7 +282,8 @@ Conversation.propTypes = {
     sendMessage: PropTypes.func.isRequired,
     getMessages: PropTypes.func.isRequired,
     setTypingTrue:PropTypes.func.isRequired,
-    deleteMessage : PropTypes.func.isRequired,
+  deleteMessage: PropTypes.func.isRequired,
+ // socket : PropTypes.func.isRequired,
     profile: PropTypes.object.isRequired,
     getProfileByHandle: PropTypes.func.isRequired,
   };
@@ -296,4 +293,4 @@ Conversation.propTypes = {
     profile: state.profile,
     messages : state.users
   });
-export default connect(mapStateToProps, {getProfileByHandle, deleteMessage, sendMessage, setTypingTrue, getMessages })(Conversation);
+export default connect(mapStateToProps, { seenMessage, getProfileByHandle, deleteMessage, sendMessage, setTypingTrue, getMessages, socketNewMessage })(Conversation);

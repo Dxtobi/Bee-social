@@ -58,8 +58,7 @@ class Login extends Component {
               <div className="container">
                 <div className="">
                   <div className="">
-                    <h1 className="color-green">Log In</h1>
-                    <p className="">Sign in to your Pip account</p>
+                    <h1>Log In</h1><br/>
                     <form noValidate onSubmit={ this.onSubmit }>
                     <TextFieldGroup
                       name="email"
@@ -77,7 +76,7 @@ class Login extends Component {
                         type="password"
                         onChange={ this.onChange }
                         />
-                      <input type="submit" value = 'Login' className="btn-submit-login" />
+                      <input type="submit" value = 'Login' className="btn-submit" />
                       <Link className="" to="/register"> Or Register</Link>
                     </form>
                   </div>

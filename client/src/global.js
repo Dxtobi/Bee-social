@@ -74,8 +74,29 @@ export const GlobalStyles = createGlobalStyle`
     text-decoration: none;
     display: flex;
   }
+  .model_custom{
+    display: flex;
+    font-size: small;
+    justify-content: space-between;
+    width: 90%;
+    margin: auto;
+    align-items: center;
+    position: fixed;
+    top: 10px;
+    z-index: 100;
+    left: 0px;
+    right: 0px;
+    height: 50px;
+    padding: 0px 10px 0px 10px;
+    background: #ff4b4b1a;
+    border-radius: 20px;
+  }
+  .model_custom_message{
+    color: violet;
+    outline: none;
+  }
   .chat-title{
-      width: 100%;
+      width: 98%;
       padding: 0.3rem;
       z-index: 888;
       position: fixed;
@@ -84,6 +105,9 @@ export const GlobalStyles = createGlobalStyle`
       color: ${({ theme }) => theme.text};
       display: flex;
       top: 0px;
+      align-content: center;
+    justify-content: space-between;
+    align-items: center;
   }
   .header-text{
     color: #03A9F4;
@@ -226,7 +250,5 @@ a{
   color: ${({ theme }) => theme.text};
   background-color: ${({theme})=>theme.body};
 }
- small{
-   font-size: 10px
- }
+
   `

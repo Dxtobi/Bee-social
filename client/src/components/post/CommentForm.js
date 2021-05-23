@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { addComment } from '../../actions/postsActions';
+
 import { IoMdSend  } from 'react-icons/io';
 
 class CommentForm extends Component {
@@ -38,7 +38,7 @@ class CommentForm extends Component {
       text: this.state.text,
     };
 
-    this.props.addComment(postId, newComment);
+    this.props.onSubmitComment(postId, newComment);
     this.setState({text: ''});
     //window.location.reload()
   }
@@ -46,7 +46,7 @@ class CommentForm extends Component {
   onChange(e) {
     this.setState({[e.target.name]: e.target.value});
   }
-  onbluecom=(e)=>{
+  onBlurCom=(e)=>{
     const name = e.target.getAttribute('name')
     this.setState({[name]: e.target.value.trim().replace(/(\r\n|\n|\r)/gm, "")});
   }
@@ -70,7 +70,7 @@ class CommentForm extends Component {
                      name="text"
                      value={this.state.text}
                      onChange={this.onChange}
-                     onBlur={this.onbluecom}
+                     onBlur={this.onBlurCom}
                      className="message-input"></textarea>
                     <div className="spacer"/>
                     <button type="submit"  onClick={this.onSubmit} className="message-submit"><IoMdSend className='icons-xx'/></button>
@@ -87,7 +87,7 @@ class CommentForm extends Component {
 }
 
 CommentForm.propTypes = {
-  addComment: PropTypes.func.isRequired,
+ // addComment: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   postId: PropTypes.string.isRequired,
   errors: PropTypes.object.isRequired
@@ -98,4 +98,4 @@ const mapStateToProps = state => ({
   errors: state.errors
 });
 
-export default connect(mapStateToProps, {addComment})(CommentForm);
+export default connect(mapStateToProps)(CommentForm);

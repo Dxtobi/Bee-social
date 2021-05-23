@@ -50,4 +50,6 @@ export const UPLOADSTATUS = 'UPLOADSTATUS'
 export const GETSTATUS = 'GETSTATUS'
 export const MSG_SENT = 'MSG_SENT'
 export const TYPING_MSG = 'TYPING_MSG'
-
+export const GET_COMMENTS = 'GET_COMMENTS';
+export const MSG_NOT_LOADING = 'MSG_NOT_LOADING'
+export const GET_MESSAGE_IO = 'GET_MESSAGE_IO'

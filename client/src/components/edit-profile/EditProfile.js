@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import {  withRouter } from 'react-router-dom';
+
 import { connect } from 'react-redux';
-//import countries from './countries'
 import { createProfile, getCurrentProfile } from '../../actions/profileActions';
+import { clearErrors} from '../../actions/postsActions';
 import TextFieldGroup from '../common/TextFieldGroup';
 import TextAreaFieldGroup from '../common/TextAreaFieldGroup';
+import Model from '../common/model';
 //import isEmpty from '../../validation/is-empty';
 import { Avatar } from '@material-ui/core';
 
@@ -41,37 +41,33 @@ class CreateProfile extends Component {
        
   }
 
-  componentDidMount(){
+  componentWillMount(){
     this.props.getCurrentProfile();
     this.clearFORMDATA()
-    
+    this.props.clearErrors()
   }
 
   componentWillReceiveProps( nextProps ){
     if(nextProps.errors){
-     this.setState({errors: nextProps.errors});
+      this.setState({errors: nextProps.errors});
     }
-
-    if(nextProps.profile.profile){
-      const profile = nextProps.profile.profile;
-
-      // Bring skills array back to Comma Separated Value
+    console.log(nextProps.isError)
+    if(nextProps.profile.profile && !nextProps.profile.loading){
+       const profile = nextProps.profile.profile;
+       // Bring skills array back to Comma Separated Value
       
-      
-     
-     
-      // Set component fields state
+       //Set component fields state
       this.setState({
-        handle: profile.handle === "undefined" ? '' : profile.handle,
-        website: profile.website === "undefined" ? '' : profile.website,
-        country: profile.country === "undefined" ? '' : profile.country,
-        bio: profile.bio === "undefined" ? '' : profile.bio,
-        state: profile.state === "undefined" ? '' : profile.state,
-        mobile: profile.phone === "undefined" ? '' : profile.phone,
-        email: profile.email === "undefined" ? '' : profile.email,
-        userImageData: profile.userImageData === "undefined" ? '' : profile.userImageData
+        handle: profile.handle !== undefined&& profile.handle,
+        website:profile.handle !== undefined&& profile.website,
+        country:profile.country !== undefined && profile.country,
+        bio:profile.bio !== undefined&& profile.bio,
+        state:profile.state !== undefined && profile.state,
+        mobile:profile.phone !== undefined && profile.phone,
+        email:profile.email !== undefined && profile.email,
+        userImageData:profile.userImageData !== undefined && profile.userImageData
       });
-      console.log(profile)
+      
     }
   }
   setdefimg(e){
@@ -92,7 +88,6 @@ class CreateProfile extends Component {
       userImageData : URL.createObjectURL(e.target.files[0])
     })
     //this.setState({[e.target.name]: e.target.value});
-    console.log(formobj);
   }
   onSubmit( e ){
 
@@ -104,11 +99,7 @@ class CreateProfile extends Component {
       formobj.append('state', this.state.state);
      // formobj.append('state', this.state.state);
       formobj.append('mobile', this.state.mobile);
-      
-   
-    console.log('====================================');
-    console.log(formobj);
-    console.log('====================================');
+
     this.props.createProfile( formobj, this.props.history );
   }
 clearFORMDATA= ()=>{
@@ -120,7 +111,8 @@ clearFORMDATA= ()=>{
     formobj.delete('mobile')
     formobj.delete('userImage')
     formobj.delete('userImageData')
-    console.log(formobj)
+  //  console.log(formobj)
+  this.props.clearErrors()
   }
 
   render() {
@@ -165,15 +157,17 @@ clearFORMDATA= ()=>{
                   <div style={{marginBottom: 1+'rem'}}/>
                   <TextFieldGroup
                     placeholder="Website"
+                    
                     name="website"
                     value={ this.state.website }
                     onChange={ this.onChange }
                     error={ errors.website }
                     info="Could be your own website or a company one"
                   />
-                  <TextFieldGroup
+                  <input
                     placeholder="Email"
                     name="email"
+                    className='form-text-input'
                     value={ this.state.email }
                     onChange={ this.onChange }
                     error={ errors.email }
@@ -202,8 +196,8 @@ clearFORMDATA= ()=>{
                   <TextFieldGroup
                     placeholder="Mobile"
                     name="mobile"
-                    type='number'
-                    value={ this.state.mobile }
+                    type='phone'
+                    value={ this.state.mobile.toString() }
                     onChange={ this.onChange }
                     error={ errors.website }
                     info="mobile"
@@ -222,6 +216,11 @@ clearFORMDATA= ()=>{
                   <input type="submit" value="Update" className="btn-submit"/>
                 </form>
               </div>
+              {
+                this.props.isError && (
+                  <Model message='error: file or bad field entry' cancelAction={this.props.clearErrors }/>
+                )
+              }
             </div>
           </div>
         </div>
@@ -230,16 +229,12 @@ clearFORMDATA= ()=>{
 }
 
 
-CreateProfile.propTypes = {
-  createProfile: PropTypes.func.isRequired,
-  getCurrentProfile: PropTypes.func.isRequired,
-  profile: PropTypes.object.isRequired,
-  errors: PropTypes.object.isRequired
-};
+
 
 const mapStateToProps = state => ({
   profile: state.profile,
-  errors: state.errors
+  errors: state.errors.errors,
+  isError:state.errors.isError
 });
 
-export default connect( mapStateToProps, { createProfile, getCurrentProfile } )( withRouter( CreateProfile ) );
+export default connect( mapStateToProps, { createProfile, getCurrentProfile, clearErrors } )( CreateProfile ) ;

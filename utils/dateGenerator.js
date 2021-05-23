@@ -15,7 +15,7 @@ module.exports  =(p)=>{
 let mnt = monthNames[m]
 let wd = findWd(n)
 
- let fd = ` ${wd} ${d} ${mnt} ▶️${y}`
+ let fd = ` ${wd} ${d} ${mnt} ${y}`
    
    // console.log(wd)
     return fd

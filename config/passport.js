@@ -17,6 +17,7 @@ module.exports = passport => {
           User.findById(jwt_payload.id)
             .then( thisuser =>{
             if(thisuser){
+             // console.log('====================================',thisuser, '====================================')
               let user = {
                 firstname : thisuser.firstname,
                 secondname : thisuser.secondname,

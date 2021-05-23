@@ -11,8 +11,8 @@ const User = require( '../../models/User' );
 const Notification = require('../../models/notification')
 const multer = require('multer')
 const Post = require('../../models/Post')
-//const Post = require('../../models/Post')
-//const Post = require('../../models/Post')
+const Followers = require('../../models/followers')
+const Following = require('../../models/following')
 //setting multer for image uplloading
 const storage = multer.diskStorage({
     destination:function (req, file, cb) {
@@ -22,7 +22,7 @@ const storage = multer.diskStorage({
         cb(null ,   Date.now() + file.originalname);
     }
 });
-//seting file filter for image
+//setting file filter for image
 const fileFilter = (req, file , cb)=>{
     //reject
     if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/PNG' || file.mimetype === 'image/JPEG' || file.mimetype === 'image/jpg' || file.mimetype === 'image/JPG' || file.mimetype === 'image/gif' || file.mimetype === 'image/GIF'){
@@ -40,37 +40,74 @@ const upload = multer(
      fileFilter :fileFilter
     })
 
-//peopleyouknow
-router.get( '/peopleyouknow', passport.authenticate( 'jwt', { session: false } ), ( req, res ) => {
+const mapFunction = (f, array) => {
+        let data=[]
+                    console.log(array.length)
+            let lnt = array.length
 
-   
-
-    User.findById(req.user.id ).populate('following.user', 'userImageData handle _id').populate('followers.user', 'userImageData handle _id')
-        .then( user => {
-            if( !user ){
-                errors.nouser = 'Just got started';
-                return res.status( 400 ).json( errors );
+            if (f === 'following') {
+                for (let i = 0; i < array.length; i++){
+                    //  console.log('---', ...array[i].following, '---')
+                    data.push(...array[i].following)
+                    lnt--
+                }
+            }else{
+                for (let i = 0; i < array.length; i++){
+                    data.push(...array[i].followers)
+                    lnt--
+                }
             }
-         //  console.log(user.following)
-            res.json( user );
-        })
-        .catch( err => res.status( 404 ).json( err ) );
-});
-//router.get( '/test', ( req, res ) =>  res.json({ message: 'Users works!' }) );
+
+            if(lnt===0){
+               // console.log(data)
+                return data
+            }
+        }
+
+
 //get profile
-router.get( '/', passport.authenticate( 'jwt', { session: false } ), ( req, res ) => {
-    const errors = { };
-   
+router.get( '/peopleyouknow', passport.authenticate( 'jwt', { session: false } ), async ( req, res ) => {
+    //console.log('hit')
+    try {
+        console.log('hit')
+    const user = await User.findById({_id: req.user.id}).select('firstname secondname handle userImageData email bio posts phone')
+        .lean()
+        .exec();
+    
+    const followers = await User.findById({_id: req.user.id}).populate('followers.user').select('userImageData handle handle _id')
+    const following = await User.findById({_id:req.user.id}).populate('following.user').select('userImageData handle handle _id')
+
+    const profile = {
+        user,
+        followers:followers.followers,
+        following:  following.following
+    }
+   // console.log(profile)
+      return res.json(profile)
+ } catch (error) {
+     console.log(error.message, 'err')
+ }
+ 
+
+
+
+     /**
+      * 
+      * const errors = { };
+    console.log('hit actions')
     User.findById(req.user.id ).populate('following.user', 'userImageData handle _id')//.populate('followers.user', 'userImageData handle _id')
         .then( user => {
             if( !user ){
                 errors.nouser = 'There is no user for this user';
                 return res.status( 400 ).json( errors );
             }
-         //  console.log(user.following)
+           // console.log(user)
+            
             res.json( user );
         })
         .catch( err => res.status( 404 ).json( err ) );
+      */
+    
 });
 //create update profile
 router.put( '/',   passport.authenticate( 'jwt', { session: false } ),  upload.single('userImageData'), async ( req, res ) => {
@@ -109,7 +146,15 @@ router.put( '/',   passport.authenticate( 'jwt', { session: false } ),  upload.s
     }
 
 });
-
+router.get( '/', passport.authenticate( 'jwt', { session: false } ), async( req, res ) => {
+    try {
+          const users = await User.findOne({_id : req.user.id}).populate('following.user', 'userImageData handle _id').populate('followers.user', 'userImageData handle _id').select('-password ')
+          
+         return res.status(200).send(users);
+    } catch (error) {
+        console.log(error)
+    }
+});
 //get other profile
 router.get( '/profiles/pro', passport.authenticate( 'jwt', { session: false } ), async( req, res ) => {
     try {
@@ -294,16 +339,14 @@ router.get( '/admins/all', passport.authenticate( 'jwt', { session: false } ), a
 })
 
 router.post( '/login', ( req, res ) => {
-    console.log('hited')
+    console.log('hited', req.body)
     const { errors, isValid } = validateLoginInput( req.body );
-    
-    if( !isValid ){
-        return res.status( 400 ).json( errors );    
+    if (!isValid) {
+        console.log('error', errors)
+        return res.json( errors )
     }
-    
     const email = req.body.email;
     const password = req.body.password;
-    
     User.findOne({ email })
         .then( user => {
         //check for user
@@ -322,12 +365,12 @@ router.post( '/login', ( req, res ) => {
                 jwt.sign(
                     payload, 
                     keys.secretKey, 
-                    { expiresIn: 3600 * 60 * 60 }, 
+                    { expiresIn: 3600 * 60 * 60 * 60}, 
                     ( err, token ) => {
                         res.json({
                             success: true,
                             token: 'Bearer '+token
-                        });    
+                        });
                 });
                 user.islogedin = true
                 user.save()
@@ -367,78 +410,88 @@ router.get( '/profiles', passport.authenticate( 'jwt', { session: false } ), asy
     }
 });
 // follow user
-router.patch( '/follow/:id',  passport.authenticate( 'jwt', { session: false } ), async ( req, res, next) => { 
+router.patch('/follow/:id', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+
     try {
         //////////////// constant verables
                 const errors = {}
                 let add = true;
                 const tobefollowed = req.params.id;
+                console.log(req.params, req.user.id, )
                 //the follower
-                const followingUser = await User.findById(req.user.id)
+                const followingUser = await User.findOne({_id : req.user.id})
                 //the followee
                 const followedByUser = await User.findById(tobefollowed)
-                const followingUserProfileId = followingUser._id;
+                const followingUserProfileId = followingUser._id
 
+
+                
                 if(followingUser._id === followedByUser._id){
                     errors.message = 'User dose not exist';
-                    console.log(errors.message)
+                    console.log('90  ' + req.user.id)
                     add = false
-                    return add, res.status(404).json({message:'service error from your server'})
                 }
+
                 if(add){
                     //check if user already following
-                followingUser.following.map(user =>{
-                   // console.log(user.user + ' 100')
-                     if(user.user.toString() === req.params.id.toString() )
+                followingUser.following.map(profile =>{
+                  //  console.log(profile.user + ' 100')
+                     if(profile.user.toString() === req.params.id.toString() )
                      {
                          add = false
-                        // console.log('already following')
-                         return add, res.status(404).json('already following');
+                       //  console.log('already following', req.params.id)
+                         return errors.message = 'already following' , add
                      }
                  });
                 }
-
                 if(!followingUser || !followedByUser){
                     errors.message = 'User dose not exist';
-                    console.log('90  ' + req.user.id);
+                 //   console.log('90  ' + req.user.id);
                     add = false
                 }
                 if(add){
+                  //  console.log(443)
                          //add following  id to followers id set 
-                    const quary = await User.findByIdAndUpdate(req.params.id, {$push : {followers : {user : followingUserProfileId }}})
-                                
+                    const quary = await User.findByIdAndUpdate(req.params.id , 
+                        {$push : {followers : {
+                                               user : req.user.id}  
+                                             }},{safe : true, upsert : true} )
                     if (quary) {
-                        //send notification
-                       
-                        //save to database
-                        let nf = {
-                            message: `${req.user.handle} startd following  you`,
-                            link: `/profile/${req.user.id}`,
-                            type:'Following',
-                            user:req.params.id
-                        }
-                       // console.log(nf)
-                        req.notification.followNotification(nf)
-                        let notif = new Notification(nf)
-                        notif.save()
-                        
+                        console.log('====================================');
+                        console.log(add + ' 111');
+                        console.log('====================================');
                         //add id to following
                         await User.findByIdAndUpdate(
                             followingUserProfileId , { 
-                                $push : {following : {user: req.params.id  }}
+                                $push : {following : {  user : tobefollowed }}
                           },{safe : true, upsert : true} 
                         );
                     }else{
+                        console.log(460)
+                        //add follow
                         add = false 
                         return add
                     }
+
+                    let nf = {
+                        message: `${req.user.handle} started following you.`,
+                        link: `/profile/${req.user.id}`,
+                        type:'Follow',
+                        user:req.params.id,
+                        avatar: req.user.userImageData
+                        }
+                    // console.log(nf)
+                       let notif = new Notification(nf)
+                       notif.save()
                 }
+
             } catch (error) {
                 console.log('====================================');
                 console.log(error.message);
                 console.log('====================================');
                 return error.message
             }
+
 });
 
 //unfollow user
@@ -475,21 +528,23 @@ router.delete( '/unfollow/:id',  passport.authenticate( 'jwt', { session: false 
 });
 
 //search by handle
-router.get( '/handle/:id', ( req, res ) => {
-   // console.log('hited')
-    const errors = { };
-        
-    User.findOne( { _id: req.params.id} )
-   // .select("firstname secondname handle  userImageData bio  _id followers following country state posts")
-   .populate('following.user', 'userImageData handle _id')
-        .then( user => {
-            if( !user ){
-                errors.nouser = 'There is no user for this user!';
-               return res.status( 400 ).json( errors );
-            }
-          return  res.json( user );
-    })
-    .catch( err => res.status( 404 ).json( err ) );
+router.get( '/handle/:id', async ( req, res ) => {
+   try{
+      // console.log('id')
+    const user = await User.findById({_id: req.params.id}).select('firstname secondname handle userImageData email bio posts phone followers following').populate('followers.user', 'userImageData handle _id').populate('following.user', 'userImageData handle _id')
+    .lean()
+    .exec();
+
+     
+
+        const profile = {
+            user,
+        }
+        //console.log(profile)
+        return res.json(profile)
+   } catch (err) {
+    return res.json(err)
+   }
 });
 
 //edit admin priviledge
@@ -518,7 +573,7 @@ router.put( '/adminedit/:id', passport.authenticate( 'jwt', { session: false } )
 
 //edit admin priviledge
 router.put( '/editProProfile/:id', passport.authenticate( 'jwt', { session: false } ), ( req, res ) => {
-    console.log(req.user)
+   // console.log(req.user)
   if (req.user.isAdmin) {
     const errors = { };
     User.findOne( { _id: req.params.id} )
@@ -542,6 +597,22 @@ router.put( '/editProProfile/:id', passport.authenticate( 'jwt', { session: fals
 router.delete( '/account/delete', passport.authenticate( 'jwt', { session: false } ), ( req, res ) => {
    // Post.find()
     Post.deleteMany({ 
+        user : req.user.id
+       // field: '{ gte: 0' }
+    }, (err) => {
+       console.log(`Error: ` + err)
+       
+    });
+    
+    Following.deleteMany({ 
+        user : req.user.id
+       // field: '{ gte: 0' }
+    }, (err) => {
+       console.log(`Error: ` + err)
+       
+    });
+
+    Followers.deleteMany({ 
         user : req.user.id
        // field: '{ gte: 0' }
     }, (err) => {

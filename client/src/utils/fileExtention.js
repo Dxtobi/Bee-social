@@ -1,4 +1,5 @@
 
+
 export function getExtention(filename) {
     let o = filename.slice((filename.lastIndexOf('.')-1>>>0)+2)
     //let x = filename.split('.').pop()

@@ -4,7 +4,8 @@ import {
   PROFILE_LOADING,
   CLEAR_CURRENT_PROFILE,
   PROFILE_FOLLOW,
-  PROFILE_UNFOLLOW
+  PROFILE_UNFOLLOW,
+  //SET_CURRENT_USER
 } from '../actions/types';
 
 const initialState = {
@@ -21,7 +22,9 @@ export default function( state = initialState, action ){
         loading: true
       }
     case GET_PROFILE:
+     // console.log(action.payload);
       return {
+       
         ...state,
         profile: action.payload,
         loading:  false

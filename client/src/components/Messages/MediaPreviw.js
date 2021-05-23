@@ -1,5 +1,5 @@
 import React from 'react';
-//import {getExtention} from '../../utils/fileExtention'
+import {getExtention} from '../../utils/fileExtention'
 
 export default class MP extends React.Component{
    
@@ -11,19 +11,28 @@ export default class MP extends React.Component{
                  <div className='preview-img'>
                      {
                             images.map((img, i)=>{
-                                    let o
-                                   // let x = getExtention(img)
-                                    //if(x === 'jpeg' || x === 'png' || x === 'PNG' || x === 'JPEG' || x === 'jpg' || x === 'JPG' || x === 'gif' || x === 'GIF'){
-                                        o = (
-                                            <div key = {i} >
-                                                <img alt='' src={img}/>
-                                            </div>
-                                        )
-                                    return o
+                                return <Media key={i} name={img}/>
                                 })
                      }
                  </div>
                 )
     }
     
+}
+
+const Media = ({ name }) => {
+    let x = getExtention(name)
+    if (x === 'jpeg' || x === 'png' || x === 'PNG' || x === 'JPEG' || x === 'jpg' || x === 'JPG' || x === 'gif' || x === 'GIF') {
+        return (
+            <div  >
+              <img alt='' src={name} />
+            </div>
+        )
+    } else {
+        return (
+            <div  >
+
+            </div>
+        )
+    }
 }

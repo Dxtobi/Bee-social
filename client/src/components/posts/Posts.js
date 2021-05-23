@@ -6,7 +6,7 @@ import PostFeeds from './PostFeeds';
 import {SpinnerDots} from '../common/Spinner';
 //import Spinner from './loadingPost';
 import { getPosts } from "../../actions/postsActions";
-import {getProProfile} from "../../actions/profileActions";
+import {getNotifications} from "../../actions/manageNotifications";
 //import { socket } from "../../App";
 class Posts extends Component {
 
@@ -23,27 +23,11 @@ class Posts extends Component {
         error:false
       }
 
-      window.onscroll = (e) =>{
-        const{
-           state : { 
-           error,
-           skip,
-           isloadingmore
-         }} = this
-        if(error || isloadingmore ){
-          return
-        }else{
-          if(window.innerHeight + document.documentElement.scrollTop === document.documentElement.offsetHeight){
-            // console.log('yess')
-             this.loadMore(skip)
-          }
-        }
-      }
+     
  }
-    
 
     componentWillReceiveProps(nextProps) {
-    //  console.log(nextProps.post.posts)
+      console.log(nextProps.post.posts)
         if(nextProps.post.posts){
           if(Object.keys(nextProps.post.posts).length > 0 && Object.keys(this.state.posts).length === 0){
             this.setState({posts : nextProps.post.posts, isloadingmore:false})
@@ -77,20 +61,28 @@ class Posts extends Component {
     }
     
     componentDidMount() {
-      this.props.getProProfile()
+   
       this.props.getPosts(this.state.skip);
       const nextSkip = this.state.skip + 5
       this.setState({skip : nextSkip})
    // console.log("old :"+ this.state.skip)
-   /*  socket.on('posts', data =>{
-       
-       if(Object.keys(this.state.posts).length > 0 && Object.keys(data).length > 0){
-       
-        this.setState({posts : [data[0], ...this.state.posts]})
-       }else{
-        this.setState({posts : data})
-       }
-     })*/
+   
+   window.onscroll = (e) =>{
+    const{
+       state : { 
+       error,
+       skip,
+       isloadingmore
+     }} = this
+    if(error || isloadingmore ){
+      return
+    }else{
+      if(window.innerHeight + document.documentElement.scrollTop === document.documentElement.offsetHeight){
+        // console.log('yess')
+         this.loadMore(skip)
+      }
+    }
+  }
     }
 
     componentWillUnmount() {
@@ -100,7 +92,8 @@ class Posts extends Component {
 
    loadMore =(skip)=>{
     this.props.getPosts(skip);
-    const nextSkip = this.state.skip + 5
+     const nextSkip = this.state.skip + 5
+     this.props.getNotifications()
     this.setState({skip : nextSkip, isloadingmore:true})
    }
   
@@ -135,7 +128,7 @@ class Posts extends Component {
 Posts.propTypes = {
   getPosts: PropTypes.func.isRequired,
   post: PropTypes.object.isRequired,
-  getProProfile:PropTypes.func.isRequired,
+  //getProProfile:PropTypes.func.isRequired,
 }
 
 const mapStateToProps = state => ({
@@ -143,4 +136,4 @@ const mapStateToProps = state => ({
   profilesPro :state.profile.profiles
 })
 
-export default connect(mapStateToProps, {getProProfile, getPosts })(Posts);
+export default connect(mapStateToProps, { getPosts, getNotifications })(Posts);

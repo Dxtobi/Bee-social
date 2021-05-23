@@ -1,30 +1,44 @@
 #chat{
   width: 100%;
   height: 100%;
-  color:rgb(248, 248, 248);
+ 
   z-index: 100;
 }
 
+.con-div{
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+  margin: auto;
+  text-align: center;
+  color: gray;
+  font-family: cursive;
+  font-style: italic;
+  font-weight: lighter;
+  
+}
+.con-btn{
+  cursor: pointer;
+  outline: none;
+    border: none;
+    border-radius: 20px;
+    padding: 0.5rem;
+    margin-top: 1rem;
+    background: #00a6c7;
+    color: white;
+}
 .chat-title .title-div{
   margin: auto 10px;
 }
 .chat-avatar{
-  box-shadow: 0px 4px 17px 0px #00000047;
+
   border-radius: 50%;
-  border-width: 2px;
-  border-style: dotted;
-  animation:chat 3s linear infinite;
 }
-@keyframes chat{
-  20% {border-color: rgb(79, 244, 3);border-bottom-color: transparent;}
-
-  40% {border-color: rgb(244, 220, 3);border-left-color: transparent;}
-
-  60% {border-color: rgb(244, 3, 3);border-top-color: transparent;}
-
-  80% {border-color: rgb(244, 3, 204);border-right-color: transparent;}
-
-  100% {border-color: rgb(3, 196, 244)}
+.user-list-holder-img-name{
+display: flex;
 }
 
 
@@ -32,7 +46,9 @@
   width: 90%;
   margin: auto;
   margin-top: 1rem;
-  display:flex;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 
@@ -46,8 +62,8 @@
 
 
 .user-list-holder-name{
-  font-weight: 500;
-  margin-left: 20px;
+  
+  margin-left: 10px;
   display: flex;
   flex-direction: column;
 }
@@ -128,9 +144,14 @@
   width: 90%;
   margin: auto;
   display: flex;
-  overflow: scroll;
+  overflow: hidden;
 }
-
+.preview-img :-webkit-scrollbar-thumb{
+  height: 1px;
+  border-radius: 20px;
+}
+.preview-img ::-webkit-scrollbar-track{background: red; border-radius: 20px; -webkit-border-radius: 20px; -moz-border-radius: 20px; -ms-border-radius: 20px; -o-border-radius: 20px;
+}
 .preview-img img{
   height: 60px;
   width: 60px;
@@ -154,19 +175,18 @@
     margin: auto;
 }
 .messageimg-sender img{
-  
   margin-top: 10px;
   margin-bottom: 10px;
   border-radius: 30px;
 }
 .msg_sub{
   display: flex;
+  font-size: small;
 }
 .messageimg img{
   border-radius: 30px;
   margin-top: 10px;
   margin-bottom: 10px;
-  
 }
 .msg_img{
     width: 20px;
@@ -230,6 +250,7 @@
   z-index: 2999;
   bottom: 100px;
   left: 0;
+  align-items: center;
   right: 0;
   background: #1d81d2;
   margin: auto;
@@ -241,16 +262,26 @@
 }
 
 
+.in_out_ind{
+  font-size: small;
+    font-style: italic;
+}
+.active-user-indicator{
 
+}
 
+.chat-title-container{
+  display: flex;
+}
+.text-system{
 
-
-
+}
 
 .text-sender{
-  background: #2196f3;
-  padding: .4rem;
-  border-radius: 9px;
+  border: 1px solid #4ab6c3;
+  padding: .6rem;
+  border-radius: 20px 20px 20px 0px;
+ 
 }
 .chat-boble-sender{
   width: -webkit-max-content;
@@ -262,20 +293,18 @@
   flex-direction: column-reverse;
   padding: .4rem;
   text-align: left;
-  font-size: 12px;
   margin: 0rem 0rem 0rem 0.3rem;
   position: relative;
   border-radius: 9px;
 }
 
 .msg-small{
-  font-size: xx-small;
   color: gray;
 }
 .text-reciver{
-  background: #555453;
-  padding: .4rem;
-  border-radius: 9px;
+  border: 1px solid #bdbdbd;
+  padding: .6rem;
+  border-radius: 20px 0px 20px 20px;
 }
 .chat-boble-reciver{
   width: -webkit-max-content;
@@ -284,10 +313,10 @@
   max-width: 80%;
   box-sizing: border-box;
   position: relative;
-  font-size: 12px;
   right: 0px;
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
+  text-align: left;
   margin: .4rem 0.4rem .4rem auto;
   border-radius: 9px;
   
@@ -310,7 +339,7 @@
   font-size: x-large;
 }
 .message-submit{
-    color: rgb(248, 248, 248);
+    
     height: 2rem;
     width: 2rem;
     display: -ms-flexbox;
@@ -343,7 +372,8 @@
   border-radius: 14px;
 }
 .group-chat-message-container{
-  display:flex
+  display:flex;
+  align-items: center;
 }
 .chat-user-img{
   margin: 1rem 0rem 0.6rem 0.3rem !important;
@@ -351,4 +381,5 @@
 .group-chat-message-name{
   font-size: smaller;
 }
-
+#messages-content{ width: 95%;
+margin: auto;}

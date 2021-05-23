@@ -2,9 +2,9 @@ import { GET_NOTIFICATION, GET_ERRORS, NOTIFICATION_LOADING } from "./types";
 
 import axios from "axios";
 
-export const getNotifications = () => async dispatch => {
+export const getNotifications = (oo) => async dispatch => {
   try {
-   // console.log('nff')
+    //console.log(oo)
     const res = await axios.get("/api/notification/get-notifications");
 
     dispatch({
@@ -22,15 +22,12 @@ export const getNotifications = () => async dispatch => {
 export const deleteNotification = (id) => async dispatch => {
   try {
    // console.log('nff')
-    const res = await axios.delete(`/api/notification/deletenotifications/${id}`);
-    dispatch({
-      type: GET_NOTIFICATION,
-      payload: res.data
-    });
+    await axios.delete(`/api/notification/deletenotifications/${id}`);
+    dispatch(getNotifications());
   } catch (err) {
     dispatch({
       type: GET_ERRORS,
-      payload: err.response.data
+      payload: err
     });
   }
 };
@@ -38,7 +35,7 @@ export const deleteNotification = (id) => async dispatch => {
 export const seenNotification = id => async dispatch => {
   try {
     await axios.patch(`/api/notification/seen-notifications/${id}`);
-    return;
+    dispatch(getNotifications())
   } catch (err) {
     dispatch({
       type: GET_ERRORS,
@@ -55,3 +52,4 @@ export const  setNfLoading = ()=>async dispatch=> {
     }
   )
 }
+

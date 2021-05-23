@@ -1,9 +1,10 @@
-import {ADD_POST, TYPING_MSG,POST_LIKE, POST_UNLIKE, GET_TAGS, GET_POSTS, DELETE_POST,DELETE_TAG, POST_LOADING, GET_POST, POST_BOOKMARK, POST_UNBOOKMARK, GET_COMMENT} from '../actions/types';
+import {ADD_POST, TYPING_MSG,POST_LIKE, POST_UNLIKE, GET_TAGS, GET_POSTS, DELETE_POST,DELETE_TAG, POST_LOADING, GET_POST, POST_BOOKMARK, POST_UNBOOKMARK, GET_COMMENT, GET_COMMENTS} from '../actions/types';
 
 const initialState = {
     posts: [],
     post: {},
-    comments:[],
+  comments: [],
+    comment:{},
     tags:[],
     loading: false,
     sent:false
@@ -35,9 +36,15 @@ export default function(state = initialState, action) {
       case GET_COMMENT:
               return {
                 ...state,
-                comments: action.payload,
+                comment: action.payload,
                 loading: false
-              }
+        }
+        case GET_COMMENTS:
+          return {
+            ...state,
+            comments: action.payload,
+            loading: false
+          }
       case POST_BOOKMARK:
               return {
                 ...state,

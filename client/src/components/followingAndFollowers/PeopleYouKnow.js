@@ -27,7 +27,7 @@ class PeopleYouKnow extends Component {
                 ids.push(u.user.id)
                 lnt--
             })*/
-          //console.log(np.profile.profile.followers, np.profile.profile.following )
+          console.log(np.profile)
           this.setState({following:np.profile.profile.following, followers:np.profile.profile.followers})
 
         }

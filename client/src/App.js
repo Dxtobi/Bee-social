@@ -4,11 +4,11 @@ import jwt_decode from 'jwt-decode';
 import setAuthToken from './utils/setAuthToken';
 import { setCurrentUser, logoutUser } from './actions/authActions';
 import { clearCurrentProfile } from './actions/profileActions';
-//import { toggleTheme } from './actions/utils';
+//import { getNotifications } from './actions/manageNotifications';
 import { Provider } from 'react-redux';
 
 import store from './store';
-import io from 'socket.io-client'
+//import io from 'socket.io-client'
 import Navbar from './components/layout/Navbar';
 import Status from './components/status/status';
 import Footer from './components/layout/Footer';
@@ -24,7 +24,9 @@ import Messages from './components/Messages/messages';
 import PostForm from './components/posts/PostForm';
 import Adsform from './components/forms/Adsform'
 import Conversation from './components/Messages/conversation';
+import CheckForCon from './components/Messages/checkForConversation';
 import Settings from './components/settings/Settings';
+import Security from './components/settings/changePassword';
 import EditProfile from './components/edit-profile/EditProfile';
 //import AddEducation from './components/add-credentials/AddEducation';
 //import AddExperience from './components/add-credentials/AddExperience';
@@ -47,6 +49,7 @@ import { GlobalStyles } from './global';
 import FullImage from './components/photo/FullImg';
 import PeopleYouKnow from './components/followingAndFollowers/PeopleYouKnow';
 import StatusView from './components/status/StatusView';
+import Comment from './components/Comments/Comment';
 //import ToggleTheme from './utils/ToggleTheme'
 
 
@@ -75,7 +78,7 @@ if( localStorage.jwtToken ){
    
   }
 }
-let socket = io
+//let socket = null//io
 
 class App extends Component {
 
@@ -96,23 +99,13 @@ class App extends Component {
     } else{
       this.setState({theme:lightTheme, themetogle:1})
     }
-    console.log('props=====' ,this.props)
-   
+ //   console.log('props=====' ,this.props)
+  
+
+  
   }
 
- /* componentWillUpdate(nextProps) {
-    let oldtheme = window.localStorage.getItem('theme')
-    if (oldtheme === '2') {
-      this.setState({theme:darkTheme, themetogle:2})
-
-    } else if (oldtheme === '3'){
-      this.setState({theme:blackTheme, themetogle:3})
-      
-    } else{
-      this.setState({theme:lightTheme, themetogle:1})
-    }
-    console.log('props=====' , nextProps)
-  }*/
+  
   
   // The function that toggles between themes
  toggleTheme = () => {
@@ -130,7 +123,7 @@ class App extends Component {
     }
   }
  componentWillReceiveProps(nextProps) {
-   console.log('props=====' , nextProps)
+  // console.log('props=====' , nextProps)
  }
 
 
@@ -158,8 +151,6 @@ class App extends Component {
         <GlobalStyles />
            <div className='h-spacer'/>
            <Switch>
-             
-               
                <Route exact path="/" component={ Landing } />
                <Route exact path="/register" component={ Register } />
                <Route exact path="/login" component={ Login } />
@@ -178,14 +169,17 @@ class App extends Component {
                <PrivateRoute exact path="/search" component={ MainSearch } />
                <PrivateRoute exact path="/message" component={ Messages } />
                <PrivateRoute exact path="/groupchat/:id" component={ GroupChat } />
-               <PrivateRoute exact path="/conversations/:id" component={Conversation}/>
+               <PrivateRoute exact path="/conversations/:id" component={CheckForCon} />
+               <PrivateRoute exact path="/messaging/:id" component={Conversation}/>
                <PrivateRoute exact path="/post/:id" component={ Post } />
                <PrivateRoute exact path="/new ads" component={ Adsform } />
                <PrivateRoute exact path="/status" component={ Status } />
                <PrivateRoute exact path="/followers" component={ PeopleYouKnow } />
                <PrivateRoute exact path="/settings" component={ Settings } />
-               <PrivateRoute exact path="/status/:id" component={ StatusView } />
-                
+               <PrivateRoute exact path="/status/:id" component={StatusView} />
+               <PrivateRoute exact path="/comment/:id" component={ Comment } />
+               <PrivateRoute exact path="/security" component={ Security } />
+
                <AuthRoute exact path="/advert/request/:id" component={ Post }/>
                <AuthRoute exact path="/advert/request/all" component={ Post }/>
                <AuthRoute exact path="/users/list/all" component={ Post }/>
@@ -195,7 +189,8 @@ class App extends Component {
                <AuthRoute exact path="/user/tvs/all" component={ Post }/>
                <AuthRoute exact path="/user/admin/panel-v1" component={ AdminHome }/>
                <AuthRoute exact path="/primume/user/all" component={ Post }/>
-               <AuthRoute exact path="/tags/edit" component={ Post }/>
+                  <AuthRoute exact path="/tags/edit" component={Post} />
+                  <Route exact path="/notfound" component={ NotFound }/>
                <Route  component={ NotFound }/>
            </Switch>
             <div className='h-spacer'/>
@@ -213,4 +208,4 @@ class App extends Component {
 }
 
 
-export { App, socket};
+export default App

@@ -1,21 +1,27 @@
 const express = require('express');
+const app = express();
+const http = require("http");
+const server = http.createServer(app);
+const {Server}=require("socket.io")
+global.io = new Server(server);
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const http = require("http");
-const app = express();
-const server = http.createServer(app);
-const io = require("socket.io")(server);
 const path = require('path');
 const passport = require('passport');
 const notification = require("./routes/api/notification");
 const User = require('./models/User');
 const Tags = require('./models/Tags')
 const users = require('./routes/api/users');
-const posts = require('./routes/api/posts')(io);
-const groupRoute = require("./routes/api/group")(io);
+const posts = require('./routes/api/posts');
+const groupRoute = require("./routes/api/group");
 const searchRoute = require("./routes/api/search");
-const conversation = require("./routes/api/conversation")(io);
+const conversation = require("./routes/api/conversation");
+
 const bcrypt = require( 'bcryptjs' );
+var cors = require('cors');
+
+
+
 //db config
 const db = require('./config/keys').mongoURI;
 mongoose.set('useFindAndModify', false)
@@ -49,20 +55,7 @@ mongoose
            
         }
 
-        let countTags = await Tags.countDocuments({});
-
-        if(countTags <= 0) {
-
-            const tags =  'love';
-
-            Tags.insertMany({name : tags})
-            .then(function(dos) {
-             // console.log('saved tags', dos)
-            })
-            .catch(function(err) {
-              console.log('errror', err)
-            });
-        }
+        
 
     } catch (err) {
 
@@ -75,6 +68,7 @@ mongoose
 
 
 //body parser middleware
+app.use(cors())
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.json());
 app.use(bodyParser.json());
@@ -85,7 +79,11 @@ app.use('/upload' , express.static(path.join(__dirname , '/upload')));
 //notification realtime
 // Realtime
 const Notifications = require("./realtime/Notification");
+const websocket = require("./routes/api/websocket");
 const notifications = new Notifications(io);
+let ws = new websocket();
+global.io.on('connection', ws.connection);
+
 
 app.use(function(req, res, next) {
   req.notification = notifications;
@@ -112,4 +110,8 @@ app.use("/api/group", groupRoute);
 const port = process.env.PORT || 5000;
 
 server.listen(port, () => console.log(`Server running on port: ${port}`));
+
+require('dns').lookup(require('os').hostname(), function (err, add, fam) {
+  console.log('addr: '+add); 
+})
 

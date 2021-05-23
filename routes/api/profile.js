@@ -175,19 +175,19 @@ router.delete( '/unfollow/:id',  passport.authenticate( 'jwt', { session: false 
     
 });
 
-router.get( '/handle/:handle', ( req, res ) => {
-    
+router.get( '/handle/:id', ( req, res ) => {
+    console.log('hited')
     const errors = { };
-        
-    Profile.findOne( { handle: req.params.handle } )
+    Profile.findOne( { _id: req.params.id } )
         .populate( 'user', [ 'name', 'avatar' ] )
         .then( profile => {
-            if( !profile ){
+            if (!profile) {
+                console.log('not ound')
                 errors.noprofile = 'There is no profile for this user!';
-                res.status( 400 ).json( errors );
+              return  res.status( 400 ).json( errors );
             }
-        
-        res.json( profile );
+        console.log(profile)
+        return res.json( profile );
     })
     .catch( err => res.status( 404 ).json( err ) );
 });
@@ -201,10 +201,10 @@ router.get( '/user/:user_id', ( req, res ) => {
         .then( profile => {
             if( !profile ){
                 errors.noprofile = 'There is no profile for this user!';
-                res.status( 400 ).json( errors );
+               return res.status( 400 ).json( errors );
             }
         
-        res.json( profile );
+        return res.json( profile );
     })
     .catch( err => 
         res.status( 404 ).json( { profile: 'There is no profile for this user!' } ) 

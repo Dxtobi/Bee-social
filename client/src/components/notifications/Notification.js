@@ -18,10 +18,10 @@ import { Avatar } from "@material-ui/core";
 
 class Notifications extends Component {
     componentDidMount() {
-      this.props.getNotifications();
+      this.props.getNotifications('notification');
     }
 
-      state = { 
+    state = { 
         showMsgOption :false
     }
     deleteNOtification = (e)=>{
@@ -30,6 +30,9 @@ class Notifications extends Component {
     onClickNf=()=>{
       this.setState({showMsgOption:!this.state.showMsgOption})
     }
+  markSeen = (id) => {
+    this.props.seenNotification(id)
+    }
     renderNotification(notification) {
       const classes = classnames({
         "list-group-item notification-item": true,
@@ -37,35 +40,35 @@ class Notifications extends Component {
     });
     return (
 
-      <li  onClick={() => this.props.seenNotification(notification._id)} className={classes} key={notification._id}>
+      <li   className={classes} key={notification._id}>
         {this.state.showMsgOption ? <div className='message-menu' onClick={e=>this.deleteNOtification(notification._id)}>Delete <MdDelete /></div>:null}
-        <Link to={notification.link}>
-        <div className='notfy-holder'onClick={this.onClickNf}>
+        <div >
+        <div className='notfy-holder' onDoubleClick={this.onClickNf}>
           <div> <Avatar style={{width: 30,  height: 30, marginRight:10}} variant =  'circle' src={`/${notification.avatar}`} /> </div>
-        <div>
+        <Link to={notification.link} onClick={() => this.props.seenNotification(notification._id)}>
           <div   className='ntfmsg'>{notification.message}</div>
           <div className="d-flex justify-content-between">
               <span className="text-primary d-block">
                 {moment.parseZone(notification.createdAt).fromNow()}
               </span>
-              {notification.seen ? (
-                <span style={{color:'gray'}}> Seen</span>
-              ) : 
-                null
-              }
-              
             </div>
-        </div>
-        
-        </div>
         </Link>
+        {notification.seen ? (
+                <div className='mark_seen' style={{color:'gray'}}><div>seen</div></div>
+              ):
+              (<div onClick={()=>this.markSeen(notification._id)} className='mark_seen'>
+               <div> mark as seen</div>
+              </div>)
+              }
+        </div>
+        </div>
       </li>
     );
   }
 
   render() {
     const { notifications } = this.props;
-    console.log(notifications)
+   // console.log(notifications)
     if (isEmpty(notifications)) {
       return <Spinner message="Spinner notifications" />;
     }

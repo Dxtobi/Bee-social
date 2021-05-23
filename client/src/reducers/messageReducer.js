@@ -1,4 +1,4 @@
-import { GET_MESSAGES , DELETE_MESSAGE, MSG_SENT, GET_USERS_TO_MESSAGES,CLEAR_MESSAGE, TYPING_MSG, MSG_LOADING} from "../actions/types";
+import { GET_MESSAGES , DELETE_MESSAGE, MSG_SENT, GET_USERS_TO_MESSAGES,CLEAR_MESSAGE, TYPING_MSG, MSG_LOADING, MSG_NOT_LOADING, GET_MESSAGE_IO} from "../actions/types";
 
 const initialState = {
   users: [],
@@ -16,18 +16,30 @@ export default (state = initialState, action) => {
         messages :action.payload,
         loading:false
       };
+    case GET_MESSAGE_IO:
+        return {
+          ...state,
+          messages :[...state.messages, action.payload],
+          loading:false
+        };
+    //GET_MESSAGE_IO
     case MSG_SENT:
       return {
-        sent:true
+        ...state,
+        sent: true,
+        loading:false
       };
     case TYPING_MSG:
-        return {
-          sent:false
+      return {
+        ...state,
+        sent: false,
+        loading:false
         };
     case DELETE_MESSAGE:
         return {
           ...state,
-          messages: state.messages.filter(msg => msg._id !== action.payload)
+          messages: state.messages.filter(msg => msg._id !== action.payload),
+          loading:false
         };
     case GET_USERS_TO_MESSAGES:
       return {
@@ -39,11 +51,17 @@ export default (state = initialState, action) => {
         return {
           ...state,
           loading: true
+      };
+    case MSG_NOT_LOADING:
+        return {
+          ...state,
+          loading: false
         };
     case CLEAR_MESSAGE:
         return{
           messages:[],
-          message:{}
+          message: {},
+          loading:false
         }
     default:
       return state;

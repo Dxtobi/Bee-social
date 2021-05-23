@@ -14,7 +14,8 @@ import {
  // POST_UNLIKE,
   GET_COMMENT,
   GET_TAGS,
-  TYPING_MSG
+  TYPING_MSG,
+  GET_COMMENTS
 } from './types';
 
 
@@ -82,24 +83,25 @@ export const addPost = postData => dispatch => {
         );
 };
 
-export const getPosts = (skip) => dispatch => {
-//console.log('hited')
+export const getPosts = (skip=0) => dispatch => {
+console.log('hited')
   dispatch(setPostLoading());
-
   axios
     .get(`/api/posts/${skip}`)
     .then(res => {
+      console.log(res + 93)
         dispatch({
           type: GET_POSTS,
           payload: res.data
         })
       }
     )
-    .catch(err =>
+    .catch(err => {
+      console.log(err)
       dispatch({
         type: GET_ERRORS,
         payload: err.message
-      })
+      })}
     );
 };
 
@@ -208,7 +210,7 @@ export const aprovedPost = id => dispatch => {
 };
 export const addLike = id => dispatch => {
   axios
-    .post(`/api/posts/like/${id}`)
+    .patch(`/api/posts/like/${id}`)
     .then(res =>  dispatch({
       type: POST_LIKE,
       payload: res.data
@@ -252,7 +254,7 @@ export const addComment = (postId, commentData)  => dispatch => {
   axios
     .post(`/api/posts/comment/${postId}`, commentData)
     .then(res =>
-      dispatch(getComment(postId))
+      dispatch(getComments(postId))
     )
     .catch(err =>
       dispatch({
@@ -261,15 +263,28 @@ export const addComment = (postId, commentData)  => dispatch => {
       })
     );
 };
-
-export const getComment = (postId)  => dispatch => {
-  //dispatch(clearErrors());
+export const replyComment = (postId, commentData)  => dispatch => {
+  dispatch(clearErrors());
 axios
-  .get(`/api/posts/comment/${postId}`)
-  .then(res =>{
-    console.log(res + '========================== 180')
+  .post(`/api/posts/reply/${postId}`, commentData)
+  .then(res =>
+    dispatch(getComments(postId))
+  )
+  .catch(err =>
     dispatch({
-      type: GET_COMMENT,
+      type: GET_ERRORS,
+      payload: err.response.data
+    })
+  );
+};
+export const getComments = (postId)  => dispatch => {
+  dispatch(setPostLoading());
+axios
+  .get(`/api/posts/comments/${postId}`)
+  .then(res =>{
+   
+    dispatch({
+      type: GET_COMMENTS,
       payload:res.data
     })}
   )
@@ -280,15 +295,29 @@ axios
     })
   );
 };
-
-export const deleteComment = (postId, commentId)  => dispatch => {
+export const getComment = (commentId)  => dispatch => {
+  dispatch(setPostLoading());
+axios
+  .get(`/api/posts/comment/${commentId}`)
+  .then(res =>{
+  //  console.log(res + '========================== 180')
+    dispatch({
+      type: GET_COMMENT,
+      payload:res.data
+    })}
+  )
+  .catch(err =>
+    dispatch({
+      type: GET_ERRORS,
+      payload: err
+    })
+  );
+};
+export const deleteComment = (replyid, commentId)  => dispatch => {
   axios
-    .delete(`/api/posts/comment/${postId}/${commentId}`)
+    .delete(`/api/posts/comment/${replyid}`)
     .then(res =>
-      dispatch({
-        type: GET_POST,
-        payload:res.data
-      })
+      dispatch(getComments(commentId))
     )
     .catch(err =>
       dispatch({

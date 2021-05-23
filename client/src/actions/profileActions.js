@@ -13,6 +13,7 @@ import {
  
 
 export const follow = (id) => dispatch => {
+  console.log(id)
   axios
     .patch(`/api/profile/follow/${id}`, )
     .then(res =>
@@ -88,34 +89,37 @@ export const getProProfile = () => dispatch => {
 
 export const getPeopleYouKnow = () => dispatch => {
  // dispatch( setProfileLoading() );
-//console.log('hited actions')
+console.log('hited actions')
   axios
     .get(`/api/profile/peopleyouknow` )
-    .then( res =>
+    .then(res => {
+      console.log(res.data + 'data')
       dispatch({
         type: GET_PROFILE,
         payload: res.data
-      })
+      })}
     )
-    .catch( err =>
+    .catch(err => {
+       console.log(err + 'error')
         dispatch({
           type: GET_ERRORS,
           payload: err.message
-        })
+        })}
       );
 };
 
 /////
 export const getProfileByHandle = (id) => dispatch => {
-  dispatch( setProfileLoading() );
-console.log('hited actions')
+  //dispatch( setProfileLoading() );
+  //console.log('hit actions')
   axios
     .get(`/api/profile/handle/${id}` )
-    .then( res =>
+    .then(res => {
+     // console.log('ressss', res.data)
       dispatch({
         type: GET_PROFILE,
         payload: res.data
-      })
+      })}
     )
     .catch( err =>
         dispatch({
@@ -131,8 +135,10 @@ export const createProfile = (profileData, history) => dispatch => {
     .put('/api/profile', profileData)
     .then(res => history.push('/dashboard'))
     .catch(err =>
-      
-    console.log(err)
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.message
+      })
       
     );
 };

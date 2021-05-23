@@ -20,17 +20,7 @@ export const joinNotification = () => {
     await axios.post("/api/notification/join", { socketId: socket.id });
   });
 
-  socket.on("newPoem", () => {
-    store.dispatch(getNotifications());
-    store.dispatch(
-      showToastMessage("New Poem written by one of your acquaintances")
-    );
-  });
-
-  socket.on("newFollower", () => {
-    store.dispatch(getNotifications());
-    store.dispatch(showToastMessage("A user just started to follow you"));
-  });
+ 
 
 
   return;

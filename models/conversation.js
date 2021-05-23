@@ -1,8 +1,10 @@
+
+
 const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
 
-const conversationSchema = new Schema({
+const ConversationSchema = new Schema({
   message:{
     text: { 
         type:String, //match: /*/^[A-Z0-9_-\s]*$/g*/ 
@@ -11,7 +13,8 @@ const conversationSchema = new Schema({
     media:[
       
     ]
-    },
+  },
+  conversationId:{type:mongoose.Schema.Types.ObjectId, ref:'conversationHandler', required:true},
     // if you want to make a group chat, you can have more than 2 users in this array
     users:[ {type:mongoose.Schema.Types.ObjectId, ref:'users', required:true }
     ],
@@ -19,6 +22,14 @@ const conversationSchema = new Schema({
     date: {
       type: Date,
       default: Date.now
+  },
+  seen: {
+    type: Boolean,
+    default:false
+  },
+  system:{
+    type: Boolean,
+    default:false
   }
   },
   {
@@ -28,6 +39,10 @@ const conversationSchema = new Schema({
 
 module.exports = mongoose.model(
   "Conversation",
-  conversationSchema,
+  ConversationSchema,
   "Conversation"
 );
+
+
+
+

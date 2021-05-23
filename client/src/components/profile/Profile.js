@@ -10,46 +10,60 @@ import {Link} from 'react-router-dom';
 import './profile_single.css'
 import {FiMail} from 'react-icons/fi'
 import { Avatar } from '@material-ui/core';
-import FollowingUser from '../dashboard/followingUsers';
+
 
 class Profile extends Component {
     state = { 
         following_class:false,
         follower:false,
-        following:[]
+        following: [],
+        followers: [],
+        loading: false,
+        posts:[]
       }
-componentDidMount(){
+componentWillMount(){
     this.props.getProfileByHandle(this.props.match.params.id)
     this.props.getUserPost(this.props.match.params.id)
 }
 
 componentWillReceiveProps(newprops){
-    console.log(newprops)
-    if(!newprops.profile.loading){
-        this.setState({following:newprops.profile.profile.following})
-        if(this.findProfileFollow(newprops.profile.profile.followers, newprops.auth.user.id)){
-          
-            this.setState({following_class:true})
+    console.log(newprops.profile.profile)
+    if(newprops.profile.loading === false && newprops.profile.profile.user ){
+        this.setState({
+            posts: this.props.post.posts,
+            following: newprops.profile.profile.user.following ? newprops.profile.profile.user.following :[],
+            followers: newprops.profile.profile.user.followers ? newprops.profile.profile.user.followers:[],
+            loading: false
+        })
+       
+        if(newprops.profile.profile.user.followers){
+          console.log(true)
+            this.setState({following_class:this.findProfileFollow(newprops.profile.profile.user.followers, newprops.auth.user.id, 'wers')})
         }
-        if(this.findProfileFollow(newprops.profile.profile.following, newprops.auth.user.id)){
-          
-            this.setState({follower:true})
+        if(newprops.profile.profile.user.following){
+            console.log(true)
+            this.setState({follower:this.findProfileFollow(newprops.profile.profile.user.following, newprops.auth.user.id, 'ing')})
         }
-        if(newprops.profile.profile._id.toString() === newprops.auth.user.id.toString()){
+        if(this.props.match.params.id.toString() === newprops.auth.user.id.toString()){
             this.props.history.push('/dashboard')
         }
+    } else {
+        this.setState({loading:true})
     }
     
 }
 
-findProfileFollow(follow, userId){
+findProfileFollow(follow, userId, n){
     //const { auth } = this.props;
+    console.log(follow, userId, n)
     if(follow.length > 0){
-      if(follow.filter(e => e.user === userId).length > 0) {
+      if(follow.filter(e => e.user._id.toString() === userId).length > 0) {
         return true;
       } else {
         return false;
       }
+    } else {
+        return false
     }
 }
 
@@ -62,59 +76,50 @@ tugleFollow =()=>{
     })
 }
 
-handlefollow=()=>{
+    handlefollow = () => {
+   
     const { profile } = this.props.profile;
-    this.tugleFollow()
-     this.props.follow(profile._id)
+        this.tugleFollow()
+        //console.log(profile)
+     this.props.follow(profile.user._id)
 }
 handleunfollow=()=>{
     const { profile } = this.props.profile;
     this.tugleFollow()
-     this.props.unfollow(profile._id)
+     this.props.unfollow(profile.user._id)
 }
 
 
 render(){
 
-const { profile, loading } = this.props.profile;
-//console.log(profile)
-const { posts } = this.props.post;
-let dashboardContent;
-//let profileImg;
+    const { profile } = this.props.profile;
+    const { following, followers, loading } = this.state;
+    const { posts } = this.props.post;
+    const allPost = [...posts]
+    let dashboardContent;
 
-let followers = 0;
-let following = 0;
 
-if( profile === null || loading  ) {
+
+
+if( profile.user === undefined || loading  ) {
     dashboardContent = <Spinner/>
 } else {
     
     // Check if logged in user has profile data
     if( Object.keys( profile ).length > 0 ){
-      
-        
-        
-      
-      if(profile.posts){
-        if(profile.followers.length > 1000)
-        { followers = profile.followers.length/1000 + 'K' }else{followers = profile.followers.length}
-        if(profile.following.length > 1000)
-        { following = profile.following.length/1000 + 'K' }else{following = profile.following.length}
-      }
-      
+ 
         dashboardContent=(
          <div>
             <div className='top-container'>
                 <div className='image-container'>
-                <Avatar style={{width: 80,  height: 80}} variant =  'circle' src={`/${profile.userImageData}`} alt={profile.name}  className='image-tag' />
-                <div className="name">{`${profile.firstname} ${profile.secondname}`}</div>
-                 <div className="name"><small style={{fontSize: 13}}>{`@${profile.handle.toLowerCase()}`}</small></div>
+                <Avatar style={{width: 80,  height: 80}} variant =  'circle' src={`/${profile.user.userImageData}`} alt={profile.user.handle}  className='image-tag' />
+                <div className="name">{`${profile.user.firstname} ${profile.user.secondname}`}</div>
+                 <div className="name"><small style={{fontSize: 13}}>{`@${profile.user.handle.toLowerCase()}`}</small></div>
                 </div>
                 <div>
-                    <div className = 'bio'>{profile.bio === 'undefined' || profile.bio === undefined? null: profile.bio}</div>
-                    <div style={{fontSize: 14}}>{profile.email}</div>
-                    <div style={{fontSize: 14}}>{profile.phone === '0' || profile.phone === 0? null : profile.phone}</div>
-                    <div style={{fontSize: 14}}>{profile.website === 'undefined' || profile.website === undefined? null:profile.website}</div>
+                        {profile.user.bio === undefined || profile.user.bio === 'undefined' ? null : <div className='bio'>{ profile.user.bio}</div> }
+                    <div style={{fontSize: 14}}>{profile.user.email}</div>
+                    <div style={{fontSize: 14}}>{profile.user.phone === '0' || profile.user.phone === 0? null : profile.user.phone}</div>
                 </div>
                 
                 <div className = 'v-spacer'/>
@@ -127,37 +132,32 @@ if( profile === null || loading  ) {
                      <div  className='btn-add-follow' style={{width:150, textAlign:'center'}} onClick={ this.handlefollow }>Follow</div> 
                     }
                      <div className = 'v-spacer'/>
-                     <Link to={`/conversations/${profile._id}` } className='message-icon'><FiMail/></Link>
+                     <Link to={`/conversations/${profile.user._id}` } className='message-icon'><FiMail/></Link>
                      <div className = 'v-spacer'/>
                     {
                         this.state.follower?<small className='small'>following</small>:null
                     }
             </div>
-            <div className="followingAndFollowers">
-                        {
-                            this.state.following.map((user, i) =>{
-                            return <FollowingUser key={i} user = {user.user} />
-                            })
-                        }
-            </div>
             <div className="dashboard-footer">
                 <div className='navbar-holder'>
                         <ul className="nav lownav" >
 
-                        <li className="list-item"><div className="">post</div><div className="">{profile.posts}</div></li>
+                        <li className="list-item"><div className="">post</div><div className="">{posts.length}</div></li>
 
                         <div className='v-spacer'/>
-                        <li className="list-item"><div className="">followers</div><div className="">{followers}</div></li>
+                        <li className="list-item"><div className="">followers</div><div className="">{followers.length}</div></li>
 
                         <div className='v-spacer'/>
-                        <li className="list-item"><div className="">following</div><div className="">{following}</div></li>
+                        <li className="list-item"><div className="">following</div><div className="">{following.length}</div></li>
                         </ul>
                 </div>
             </div>
             <div className="main-content">
                 
                 <div className="main-content">
-                { posts.map( post => <SingleItem key={post._id} post={post}/>)}
+                        {
+                            allPost.map(post => <SingleItem key={post._id} post={post} />)
+                        }
                 </div>
             </div>
         </div>
@@ -168,8 +168,6 @@ if( profile === null || loading  ) {
          <Spinner/>
         </div>
       )
-
-  
     }
 }
 
@@ -179,9 +177,7 @@ if( profile === null || loading  ) {
      <button onClick={e=>this.props.history.goBack()} className="btn-normal">Go Back</button>
      {dashboardContent}
   </div>
-)
-
-}
+ )}
 }
 
 

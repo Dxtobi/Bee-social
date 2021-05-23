@@ -4,7 +4,8 @@
 }
 .setting-footer{
     display: flex;
-    width: 120%;
+    justify-content: space-between;
+    align-items: center;
 }
 .setting-page{
     height : 100vh;
@@ -14,18 +15,18 @@
     font-weight: 500;
 }
 .setting-box{
-    width: 95%;
-    background: #00000085;
+    background: linear-gradient(45deg, #007e8a, #00e16de6);
     color: white;
     margin: auto;
     padding: .6rem;
     border-radius: 20px;
-    box-shadow: 0px 4px 20px 0px #00000085;
+    box-shadow: 0px 19px 20px -10px #000000b8;
     margin-top: 15px;
 }
 .setting-box-content{
     display: flex;
-    justify-content: right;
+    justify-content: space-between;
     margin-top: 10px;
     margin-bottom: 10px;
+    align-items: center;
 }

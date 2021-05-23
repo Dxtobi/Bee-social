@@ -24,7 +24,7 @@ router.get("/",passport.authenticate( 'jwt', { session: false } ), async (req, r
 
     const posts = await Post.find()
     .populate( 'user', 
-         ['profileImageData', 'firstname', 'secondname' , 'handle', '_id' ] )
+         ['profileImageData', 'firstname', 'secondname' , 'handle', '_id','userProgress' ] )
     .lean()
     .exec();
 
@@ -35,6 +35,7 @@ router.get("/",passport.authenticate( 'jwt', { session: false } ), async (req, r
           handle_link: `/profile/${user._id}`,
           handle: user.handle,
           image: user.userImageData,
+          userProgress: user.userProgress,
           is: "User"
         });
       }
@@ -70,7 +71,7 @@ router.get("/searching/:searchvalue", passport.authenticate( 'jwt', { session: f
     const user = await User.find({$or:[
       {firstname:seachRegex},
       {secondname:seachRegex},
-      {handlename:seachRegex},
+      {handle:seachRegex},
     ]})
     .lean()
     .exec();
@@ -88,7 +89,7 @@ router.get("/searching/:searchvalue", passport.authenticate( 'jwt', { session: f
       {text:seachRegex},
     ]})
     .populate( 'user', 
-         ['profileImageData', 'firstname', 'secondname' , 'handle', '_id' ] )
+         ['profileImageData', 'firstname', 'secondname' , 'handle', '_id' ,'userProgress'] )
     .lean()
     .exec();
 
@@ -99,6 +100,7 @@ router.get("/searching/:searchvalue", passport.authenticate( 'jwt', { session: f
         handle_link: `/profile/${user._id}`,
         handle: user.handle,
         image: user.userImageData,
+        userProgress:user.userProgress,
         is: "User"
       });
     }

@@ -2,7 +2,7 @@ const router = require("express").Router();
 const _ = require("lodash");
 
 const User = require("../../models/User");
-const GroupMsg = require("../../models/groupmessage");
+const GroupMsg = require("../../models/message");
 const Group = require("../../models/Group");
 const Post = require("../../models/Post");
 const passport = require( 'passport' );
@@ -267,11 +267,11 @@ router.patch("/joingroup/:id" ,passport.authenticate( 'jwt', { session: false } 
     let add = true
     const this_group = await Group.findById(req.params.id)
     this_group.members.map(user =>{
-    //   console.log(user + ' 100')
+       console.log(user, req.user.id.toString())
         if(user.toString() === req.user.id.toString() )
         {
             add = false
-           // console.log('already following')
+            console.log('already following')
             return add, res.status(404).json('already following');
         }
      });

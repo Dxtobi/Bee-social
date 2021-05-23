@@ -18,12 +18,15 @@ class Comment extends Component {
   render() {
     const { comment} = this.props;
    // console.log(comment)
+    if(comment.comment === null){
+      return<div className="comments">last comment was deleted</div>
+    }
     return (
       
         <Link to={`/post/${comment.comment.post}`}>
             <div className="comments">
                 <div className="comments-h">{comment.comment.handle}</div>
-                <div className="comments-t">{this.truncateString(comment.comment.text, 20)}</div>
+                <div className="comments-t">{this.truncateString(comment.comment.text, 50)}</div>
             </div>
         </Link>
       

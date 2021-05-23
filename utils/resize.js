@@ -4,12 +4,12 @@ const sharp = require('sharp')
 const path = require('path')
 
 
-function getExtention(filename) {
+/*function getExtention(filename) {
     let o = filename.slice((filename.lastIndexOf('/')-1>>>0)+2)
     //let x = filename.split('.').pop()
    // console.log(x, o)
     return o
-}
+}*/
 
 const resize = async(array) =>{
    // let newArray=[]
@@ -53,4 +53,3 @@ const resize = async(array) =>{
 
 
 module.exports = resize
- 

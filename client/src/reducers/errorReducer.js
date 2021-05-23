@@ -1,14 +1,23 @@
 import {CLEAR_ERRORS, GET_ERRORS} from '../actions/types';
 
-const initialState = { };
+const initialState = {
+  error:'',
+  isError:false
+};
 
 export default function( state = initialState, action ){
   switch( action.type ){
     case GET_ERRORS:
       console.log(action.payload)
-      return action.payload;
+      return {
+        ...state,
+        isError: true,
+    }
     case CLEAR_ERRORS:
-      return {};
+      return {
+        ...state,
+        isError: false,
+      };
     default:
       return state;
   }

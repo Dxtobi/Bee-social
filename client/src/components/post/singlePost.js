@@ -115,13 +115,13 @@ componentDidMount() {
           {this.state.showmenu?
             <div className="post-model">
               <div className="post-model-item" onClick={e=>this.onReportPost(post._id)}>
-                      <small>Report this post</small><MdReport className='icons'/>
+                      <div>Report this post</div><MdReport className='icons'/>
               </div>
               
                     
                      { post.user._id === auth.user.id || auth.user.admin? 
                      <div className="post-model-item" onClick={e=>this.onDeleteClick(post._id)}>
-                               <small>Delete this post</small> <TiDelete
+                               <div>Delete this post</div> <TiDelete
                                   onClick={e=>this.onDeleteClick(post._id)}
                                   className="icons red"
                                 />
@@ -134,9 +134,9 @@ componentDidMount() {
           <div className="feed_header">
           <div className={post.user.userProgress === 3  ? `feed-profile-img` : ''}><Link to={`/profile/${post.user._id}`}><Avatar style={{width: 30,  height: 30}} variant =  'circle' src={`/${post.user.userImageData}`} alt={post.user.handle}  /></Link></div>
             <div className="feed-handle-text">
-              {`${post.user.firstname}  ${ post.user.secondname}`}<br/>
+              {`${post.user.handle } `}<br/>
             </div>
-           <small style={{ fontSize:13}}>{moment.parseZone(post.date).fromNow()}</small>
+           <small style={{ fontSize:13, marginLeft:5}}>{` ${moment.parseZone(post.date).fromNow()}`}</small>
             <div className='v-spacer'/>
             
             {this.state.showmenu? <IoMdArrowDropupCircle  onClick={this.toglemenu} className='icons'/>:<IoMdArrowDropdownCircle   onClick={this.toglemenu} className='icons' />}
@@ -156,7 +156,7 @@ componentDidMount() {
               {post.text ?(<div className='feed_text'>{Autolinker.link(post.text)}</div>):null}
               {post.postImageData ? (<Postimg imageSrc = {post.postImageData} imgAlt = {''}/>):null}
               <div className='mini_feed_footer'>
-                <small style={{display:'flex' ,fontWeight:10}}>{this.state.postlike}likes. <div className='spacer'/> {post.comments}comments. <div className='spacer'/>{this.state.countmarked}share </small>
+                <div style={{display:'flex' ,fontWeight:10}}>{this.state.postlike}likes. <div className='spacer'/> {post.comments}comments. <div className='spacer'/>{this.state.countmarked}share </div>
               </div>
             { showActions ? (
                   <div className='feed_footer'>

@@ -11,12 +11,10 @@ class Profiles extends Component {
       this.props.getProfiles();
   }
  handlefollow = (id) =>{
-  
   this.props.follow(id);
  // window.location.href = '/profiles'
  }
  handleunfollow = (id) =>{
-  
   this.props.unfollow(id)
  // window.location.href = '/profiles'
  }

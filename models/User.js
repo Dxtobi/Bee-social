@@ -29,7 +29,7 @@ const UserSchema = new Schema({
    businessName: {
     lowercase:true,
          type: String
-   },
+    },
    website: {
     lowercase:true,
          type: String

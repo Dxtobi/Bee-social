@@ -56,13 +56,12 @@ const PostSchema = new Schema({
         type:Number,
         default:0
     },
-    lastcomments:[ {
+    lastcomments: {
            comment : {
             type:Schema.Types.ObjectId,
             ref: 'comment'
          }
-        }
-    ],
+        },
     date: {
         type: Date,
         default: Date.now

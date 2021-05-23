@@ -71,7 +71,7 @@ class Register extends Component {
                 <div className="row">
                   <div className="col-md-8 m-auto">
                     <h1 className="display-4 text-center">Pipe </h1>
-                    <p className="lead text-center">Sign Up</p>
+                    <p className="lead text-center" style={{marginBottom:10}}>Sign Up</p>
                     <form noValidate onSubmit={ this.onSubmit }>
                     <TextFieldGroup
                       name="firstname"
@@ -129,7 +129,7 @@ class Register extends Component {
                         error={ errors.password2 }
                         onChange={ this.onChange }
                         />
-                      <input type="submit" className="btn-submit" />
+                      <button type="submit" className="btn-submit" >Get in </button>
                     </form>
                   </div>
                 </div>

@@ -2,9 +2,9 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import TextAreaFieldGroup from '../common/TextAreaFieldGroup';
-import TextFieldGroup from '../common/TextFieldGroup';
+import Model from '../common/model';
 import {IoIosSend} from 'react-icons/io';
-import {addPost, getTags, setTypingTrue} from '../../actions/postsActions';
+import {addPost, getTags, setTypingTrue, clearErrors} from '../../actions/postsActions';
 import SimpleReactValidator from 'simple-react-validator';
 import { Avatar, } from '@material-ui/core';
 import MP from '../Messages/MediaPreviw';
@@ -31,10 +31,11 @@ class PostForm extends Component {
     this.onChangeImg = this.onChangeImg.bind(this);
   }
   
-  componentDidMount(){
-    this.props.getTags();
+  componentDidMount() {
+    this.props.clearErrors()
+   // this.props.getTags();
     this.handleFocus()
-   // this.clearFORMDATA()
+    this.clearFORMDATA()
     //console.log(formobj)
   }
   componentWillReceiveProps(newProps) {
@@ -94,6 +95,7 @@ class PostForm extends Component {
     formobj.delete('profil_id')
     formobj.delete('postImage');
     formobj.delete('postImageData')
+    this.props.clearErrors()
    // console.log(formobj)
   }
   onChange( e ){
@@ -147,22 +149,13 @@ class PostForm extends Component {
         <div className="">
           <div className='user_post'>
             <div className='postAvatar'><Avatar variant ='circle' className='post-Avatar'  src={this.props.auth.user.avatar} alt=''/></div>
-            <div>{this.props.auth.user.handle}</div>
           </div>
-
+          {errors.isError && (
+            <Model message='file might be too large or Network errors' cancelAction={ this.props.clearErrors} />
+            )}
           <div className="">
             <form onSubmit={this.onSubmit} encType='multipart/form-data'>
               <div className="">
-             <div className='midle'>
-                <TextFieldGroup
-                      onFocus={this.handleFocus}
-                      placeholder="add a tag ? e.g happy, sad"
-                      name="Tags"
-                      value={ this.state.Tags }
-                      onChange={ this.onChangeTag }
-                      info="what the post is about"
-                 />
-             </div> 
                 <TextAreaFieldGroup
                   placeholder="Create a post...."
                   name="text"
@@ -187,7 +180,7 @@ class PostForm extends Component {
              </div>
             </form>
             <MP images={this.state.postImage}/>
-            {this.state.Tags !== '' ?this.searchResults(this.state.tags):null}
+           
           </div>
         </div>
       </div>
@@ -213,4 +206,4 @@ const mapStateToProps = state => ({
   post:state.post
 });
 
-export default connect(mapStateToProps, {addPost , setTypingTrue, getTags})(PostForm);
+export default connect(mapStateToProps, {addPost , setTypingTrue, getTags, clearErrors})(PostForm);

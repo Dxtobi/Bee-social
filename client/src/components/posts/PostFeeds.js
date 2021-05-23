@@ -1,10 +1,8 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import PostItem from './PostItem';
-import {Proprofiles} from '../profiles/proProfiles'
 import RePostItem from './Repost';
-import { Link } from 'react-router-dom';
-import { FiPlus } from 'react-icons/fi';
+
 
 class PostFeeds extends Component {
 
@@ -33,18 +31,10 @@ class PostFeeds extends Component {
   }
   render() {
 
-    const { posts , profiles} = this.state;
+    const { posts } = this.state;
    // console.log(profiles)
     return (
       <div>
-         <div className='proUsersbox'>
-            <div>
-             
-                 <Link to={`/status`}><div className='addStatus' ><FiPlus /></div></Link>
-           
-        </div>
-           {profiles.map( (user, i) => <Proprofiles key={i} user={user}/>)}
-         </div>
          {posts.map( (post, i) => post.repost? <RePostItem key={i}  post={post}/> :<PostItem key={i} runRelode={true} post={post}/>)}
       </div>
       )

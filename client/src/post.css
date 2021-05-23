@@ -45,11 +45,13 @@
     width: 99%;
     height: 100%;
     border-radius: 15px;
+    box-shadow: 0px 4px 20px -10px #000000ad;
   }
 .post-image-wrapper div img{
     width: 99%;
     height: 100%;
     border-radius: 15px;
+    box-shadow: 0px 4px 20px -10px #000000ad;
   }
 .post-image{
     position: relative;
@@ -91,7 +93,7 @@ ul{
     display: flex;
     
     align-items: center;
-    width: 100%;
+    width: 96%;
     margin: auto;
     height: 40px;
     
@@ -114,7 +116,7 @@ ul{
 width: 100%;
 }
 .comment-container{
-    width: 93%;
+    width: 100%;
     padding: 5px;
     margin: auto;
     margin-top: 5px;
@@ -134,10 +136,14 @@ width: 100%;
 }
 .comment-handle{
     margin-left: 5px;
-    font-weight: 620
+    font-weight: 620;
+    width: 80%;
 }
 .comment-text{
-    margin-left: 10px;
+    padding: 5px;
+    border-radius: 10px;
+    box-shadow: 0px 20px 20px -10px #00000030;
+    font-weight: normal;
 }
 .file-input
 {
@@ -180,7 +186,7 @@ width: 100%;
     text-align: justify;
     margin-bottom: 25px;
     background-color: rgba(255, 255, 255, 0);
-    box-shadow: 0px 10px 20px 0px #0000001f;
+    box-shadow: 0px 8px 20px -10px #0000004f;
     border-radius: 9px;
     -webkit-border-radius: 9px;
     -moz-border-radius: 9px;
@@ -207,9 +213,7 @@ width: 100%;
     margin-bottom: 8px;
     margin-top: 10px;
 }
-small{
-    font-size: 11px
-}
+
 .feed-body-container{
     width: 95%;
     margin: auto;
@@ -236,7 +240,6 @@ small{
 }
 .feed-handle-text small{
     text-transform: lowercase;
-    font-size: 13px;
 }
 .place-center{
     width: 50%;
@@ -394,12 +397,15 @@ small{
   width: 100%;
 }
 .post-model-item{
-    width: 50%;
-    margin: auto;
-    background: #080d109c;
+    width: 90%;
+    margin: 15px auto;
+    background: #ffffff;
     padding: .3rem;
     border-radius: 20rem;
     display: flex;
+    align-items: center;
+   
+    box-shadow: 0px 0px 18px -10px #000000b5;
     justify-content: space-between;
 }
 .proUsersbox{
@@ -458,4 +464,10 @@ small{
     60% {border-color: rgb(244, 3, 3)}
 
     100% {border-color: rgb(3, 196, 244)}
+}
+
+.reply-component{
+    width: 80%;
+    position: relative;
+    margin-left: 8%;
 }

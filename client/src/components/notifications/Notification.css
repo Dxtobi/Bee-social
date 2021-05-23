@@ -1,13 +1,28 @@
 .notification-item {
   width: 100%;
-  text-align: center;
   margin: auto;
   margin-top: 16px;
   border-radius: 15px;
 }
 .notfy-holder{
   display: flex;
-  padding: 4px;
+
+  padding: 12px;
+  box-shadow: 0px 12px 20px -20px black;
+}
+.mark_seen{
+  background: #00000021;
+    text-align: center;
+    border-radius: 30px;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.mark_seen:hover{
+  
+  box-shadow: 1px 7px 7px -5px #00000066;;
 }
 .notificaion-cont{
   font-weight: bold;
@@ -23,11 +38,7 @@
 .nf-icons{
   display: flex;
 }
-  .notification-item:hover {
-   
-    transform: scale(1.01);
-    box-shadow: 1px 1px 0.4rem 0.2rem #00000059;
-  }
+
   .ntfmsg{
     font-size: 1rem;
   }

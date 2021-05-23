@@ -38,6 +38,7 @@ export default class PostImg extends React.Component{
                         }
                         else
                         {
+                            
                            let o = 'this is a video file'
                            return o
                         }

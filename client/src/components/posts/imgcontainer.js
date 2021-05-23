@@ -12,15 +12,12 @@ export default class ImgContainer extends React.Component{
     }
 
     render(){
-        const { img} =this.props
+        const {img} =this.props
         return(
             <div>
                  {
                     this.state.displayfull ? <button onClick={this.toggleFullImg} className='img-go-back'><IoIosArrowBack className='btn-icons'/></button>:null
-                   
                  }
-             
-                           
                                 <img src={`/${img}`} alt ={''}  style={{borderRadius:20}} 
                                 onClick={this.toggleFullImg}
                                 className={this.state.displayfull?'displayfull':null}/>

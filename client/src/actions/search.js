@@ -16,9 +16,9 @@ export const getSearch = () => async dispatch => {
   }
 };
 
-export const makeASearch = (searchvar) => async dispatch => {
+export const makeASearch = (searchVar) => async dispatch => {
   try {
-    const res = await axios.get(`/api/search/searching/${searchvar}`);
+    const res = await axios.get(`/api/search/searching/${searchVar}`);
     dispatch({
       type: GET_SEARCH,
       payload: res.data

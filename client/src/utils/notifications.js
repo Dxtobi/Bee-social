@@ -1,5 +1,6 @@
 import {getNotifications}from '../actions/manageNotifications'
 
-export const checknf = ()=>{
+export const checknf = () => {
+    console.log('called')
     getNotifications()
 }

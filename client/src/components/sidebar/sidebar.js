@@ -1,7 +1,7 @@
 import React from 'react'
 //import { Link } from 'react-router-dom'
 import { MdShuffle } from 'react-icons/md'
-import  {FaUsers} from 'react-icons/fa'
+//import  {FaUsers} from 'react-icons/fa'
 import './side.css'
 //import { logoutUser } from '../../actions/authActions';
 import PropTypes from 'prop-types';

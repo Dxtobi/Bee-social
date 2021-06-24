@@ -32,6 +32,7 @@ router.get('/:skip', passport.authenticate( 'jwt', { session: false } ), async (
                        // console.log('fetching posts...')
                         const post1 =await Post.find()
                         .populate( 'user',  ['userImageData', 'handle','userProgress', 'firstname','secondname', '_id'] )
+                        .populate( 'postedby',  ['userImageData', 'handle','userProgress', 'firstname','secondname', '_id'] )
                         .populate(  'lastcomments.comment')
                             .sort( { date: -1 } )
                             .skip(parseInt(req.params.skip))
@@ -41,6 +42,7 @@ router.get('/:skip', passport.authenticate( 'jwt', { session: false } ), async (
                      //   console.log(following)
                         let post2 = await Post.find({user: { $in : following } })
                         .populate( 'user',  ['userImageData', 'handle','userProgress', 'firstname','secondname', '_id'] )
+                        .populate( 'postedby',  ['userImageData', 'handle','userProgress', 'firstname','secondname', '_id'] )
                         .populate(  'lastcomments.comment')
                             .sort( { date: -1 } )
                             .skip(parseInt(req.params.skip))
@@ -282,10 +284,9 @@ router.post( '/new/ads',  uploadFunctions.upload.single('ads_media'), passport.a
                 let t = req.body.tags;
                 let tsA = t.split(",")
                 const postFields = { };
-               // console.log('hited ads-----', req.body.ads_media)
+                //console.log('hited ads-----', req.body.ads_media)
                 //console.log(req.files)
                 if( req.file ) postFields.postImageData = req.file.path;
-        
                 // other parts
                 if( req.body.companyName ) postFields.companyName  = req.body.companyName ;
                 if( req.body.webSites ) postFields.webSites = req.body.webSites;

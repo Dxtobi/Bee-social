@@ -11,8 +11,7 @@ const User = require( '../../models/User' );
 const Notification = require('../../models/notification')
 const multer = require('multer')
 const Post = require('../../models/Post')
-const Followers = require('../../models/followers')
-const Following = require('../../models/following')
+
 //setting multer for image uplloading
 const storage = multer.diskStorage({
     destination:function (req, file, cb) {
@@ -604,21 +603,7 @@ router.delete( '/account/delete', passport.authenticate( 'jwt', { session: false
        
     });
     
-    Following.deleteMany({ 
-        user : req.user.id
-       // field: '{ gte: 0' }
-    }, (err) => {
-       console.log(`Error: ` + err)
-       
-    });
-
-    Followers.deleteMany({ 
-        user : req.user.id
-       // field: '{ gte: 0' }
-    }, (err) => {
-       console.log(`Error: ` + err)
-       
-    });
+    
     User.findOneAndRemove(  req.user.id  )
         .then( () => {
                 res.json( { success: true } ) 

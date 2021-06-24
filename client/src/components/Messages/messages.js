@@ -4,9 +4,9 @@ import { getUsersToSendMessageTo,clearMsg } from "../../actions/messageAction";
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import SingleUser from './message_single';
-//import SingleGroup from '../createGroup/groups';
+import {Link} from 'react-router-dom';
 import { getUserGroup  } from '../../actions/groupActions';
-//import { TiGroup, TiUser} from 'react-icons/ti';
+import { TiGroup} from 'react-icons/ti';
 //import { SpinnerDots } from '../common/Spinner';
 
 //import moment from  'moment'
@@ -75,7 +75,20 @@ class Messages extends React.Component {
           //const { groups } = this.props.groups;
           return (
                 <div className="messages_wrapper">
-                  <div className="users-holder">
+              <div className="users-holder">
+                <Link to=''>
+                <div className='user-list-holder'>
+                <div className='user-list-holder-img-name'>
+                   <TiGroup icon={25}/>
+                  <div>
+                      <div className='user-list-holder-name'>
+                         Group
+                      </div>
+                </div>
+                </div>
+                </div>
+              </Link>
+                  
                     { usersToSendTo.map((user, i )=>{
                       return <SingleUser key={i} resiver={this.props.auth.user.id} user={user}/>
                     })}

@@ -7,22 +7,22 @@ const groupSchema = new Schema({
     type: String,
     required: true,
   },
-
   info: {
     type: String,
     required: true
   },
-
   groupImage: {
     type: String
   },
-
+  private_group: {
+    type: Boolean,
+    default: false,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
     required: true
   },
-
 
   members: [
     {

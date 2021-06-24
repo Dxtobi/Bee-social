@@ -159,7 +159,7 @@ export const getGroup = (id) => dispatch => {
 export const getGroupAll = () => dispatch => {
   dispatch(setLoading())
   axios
-    .get(`/api/group/`)
+    .get(`/api/groups/`)
     .then(res =>
       dispatch({
         type: GET_GROUPS,

@@ -39,7 +39,7 @@ import NotFound from './components/not-found/NotFound';
 import './App.css';
 import Creategroup from './components/createGroup/creategroup';
 import UpdateGroup from './components/createGroup/updategroup';
-import Groups from './components/createGroup/groups';
+import Groups from './components/createGroup/allGroups';
 import GroupChat from './components/createGroup/groupChat';
 import Sidebar from './components/sidebar/sidebar'
 import { ThemeProvider } from 'styled-components';

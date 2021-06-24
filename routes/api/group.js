@@ -37,37 +37,6 @@ const upload = multer(
      fileFilter :fileFilter
     })
 
-module.exports = (io) => {
-
-  let socketFun = {}
-  let connectedUsers = {}
-  let getUser = ()=>{
-   // console.log(connectedUsers)
-  }
-  //declearing all socket function for post
-  io.on('connection', function(socket) {
-   
-    socket.on('user_joined', (gid, user) =>{
-      connectedUsers[user.id] =socket.id
-      socket.join(gid)
-    //  console.log(gid, user)
-      socket.to(gid.toString()).emit(`${gid}-new_user_joined`, user.handle)
-    })
-      socketFun = {
-          newGroupMessageEvent : (togroupid, data)=>{ 
-             socket.to(togroupid).emit(`${togroupid}-message`, data)
-          },
-          hasjoined : (to, data)=>{ 
-             socket.to(to.toString()).emit('user_joined', data)
-          },
-      }
-
-      
-
-
-
-     // console.log('new connection  ' + socket.id);
-  });
 
 
 
@@ -261,7 +230,7 @@ router.get("/get/group/message/:id",  passport.authenticate( 'jwt', { session: f
 // @access  POST
 router.patch("/joingroup/:id" ,passport.authenticate( 'jwt', { session: false } ), async (req, res) => {
   //const { isValid, errors } = validateGroup(req.body);
-  
+
 
   try {
     let add = true
@@ -350,6 +319,7 @@ router.delete("/delete/:groupId",  passport.authenticate( 'jwt', { session: fals
 // @access  GET
 router.get("/",   passport.authenticate( 'jwt', { session: false } ),async (req, res) => {
   try {
+    console.log('hit')
     const groups = await Group.find()
       .populate("admins", "firstname secondname handle _id")
       .lean()
@@ -387,5 +357,5 @@ router.get("/groups/mygroups",   passport.authenticate( 'jwt', { session: false 
   }
 });
 
- return router
-}
+module.exports = router;
+

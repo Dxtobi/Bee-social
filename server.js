@@ -104,7 +104,7 @@ app.use("/api/search", searchRoute);
 app.use("/api/conversation", conversation);
 app.use('/api/posts', posts);
 app.use("/api/notification", notification);
-app.use("/api/group", groupRoute);
+app.use("/api/groups", groupRoute);
 
 
 const port = process.env.PORT || 5000;

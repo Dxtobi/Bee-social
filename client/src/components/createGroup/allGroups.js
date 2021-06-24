@@ -1,5 +1,7 @@
 import React from 'react';
 import {getGroupAll} from '../../actions/groupActions'
+import { connect } from 'react-redux';
+
 
 class GroupAll extends React.Component {
     constructor(){
@@ -20,7 +22,7 @@ class GroupAll extends React.Component {
             this.setState({ groups :nextProps.group.group})
           
             
-           this.scrollBottom()
+          // this.scrollBottom()
            //
            
          
@@ -30,7 +32,7 @@ class GroupAll extends React.Component {
       
         // this.props.getGroupMessages(this.props.match.params.id);
       this.props.getGroupAll();
-      this.scrollBottom();
+    //  this.scrollBottom();
      //let sokio = socket.connect(`/${this.state.group._id}`)
  }
  
@@ -40,18 +42,13 @@ class GroupAll extends React.Component {
            
           
          return (
-         <div>
-           
-        
-         </div>
+            <div>
+                All Groups
+            </div>
          );
      }
  }
- GroupChat.propTypes = {
-     auth: PropTypes.object.isRequired,
-     getGroup : PropTypes.func.isRequired,
-     group :  PropTypes.object.isRequired
-   };
+
    
    const mapStateToProps = state => ({
      auth: state.auth,

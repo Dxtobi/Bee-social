@@ -30,6 +30,10 @@ const PostSchema = new Schema({
         type:Boolean,
         default:false
     },
+    isPromoted:{
+        type:Boolean,
+        default:false
+    },
     promoted:{
         type:Number,
         default:1
